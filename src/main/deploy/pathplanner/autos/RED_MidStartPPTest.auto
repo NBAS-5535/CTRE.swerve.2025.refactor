@@ -1,0 +1,133 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RED_Start_Center"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "MoveCorralToLowerReefLevel"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StraightenActuator"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DropCorralToLowerReefLevel"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ReadyForAlgaePickup"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RED_Start_Center_AfterCorralDrop"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PickupAlgaeFromLowReef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeAlgaeFromReef"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RED_Start_Center_Followup"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "RaiseForAlgaeNetShooting"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "EjectAlgae"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToHighReefPickupPosition"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RED_RetreatFromStartLine"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
