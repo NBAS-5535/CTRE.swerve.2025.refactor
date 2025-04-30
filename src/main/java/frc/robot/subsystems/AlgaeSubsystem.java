@@ -156,7 +156,7 @@ public class AlgaeSubsystem extends SubsystemBase {
    * positions for the given setpoint.
    */
   public Command setSetpointCommand(Setpoint setpoint) {
-    return this.runOnce(
+    return this.run(     // originally runOnce() without until()
         () -> {
           switch (setpoint) {
             case kGroundPickup:
@@ -204,7 +204,9 @@ public class AlgaeSubsystem extends SubsystemBase {
               elevatorCurrentTarget = ElevatorSetpoints.kAlgaeNet;
               break;
           }
-        });
+          this.moveToSetpoint();
+        })
+        .until(() -> this.isSetpointReached(setpoint));
   }
 
   /**
@@ -279,9 +281,11 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    /* probably not needed with run().until() way
     if ( runPeriodic ) {
       moveToSetpoint();
     }
+    */
 
     //zeroElevatorOnLimitSwitch();
     zeroOnUserButton();
@@ -354,11 +358,17 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   /**
    * Method to compare current encoder reading with the setpoins 
-   * May be used to ensure the arm/elevator motion is not prematurely terminated
+   * To be used to ensure the arm/elevator motion is not prematurely terminated
    */
-  public boolean isSetpointReached(double armTarget, double elevatorTarget){
+  //public boolean isSetpointReached(double armTarget, double elevatorTarget){
+  public boolean isSetpointReached(Setpoint setpoint){
+    double[] currentSetpointDetails = getSetpointDetails(setpoint);
+    double armTarget = currentSetpointDetails[0];
+    double elevatorTarget = currentSetpointDetails[1];
+
     double armCurrentPosition = armEncoder.getPosition();
     double elevatorCurrentPosition = elevatorEncoder.getPosition();
+
     if ( ( Math.abs(armCurrentPosition) >= Math.abs(armTarget) - Constants.distanceEpsilon) &&
          ( Math.abs(elevatorCurrentPosition) >= Math.abs(elevatorTarget) - Constants.distanceEpsilon) ) {
           return true;

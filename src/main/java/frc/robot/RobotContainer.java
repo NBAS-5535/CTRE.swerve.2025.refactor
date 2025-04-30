@@ -100,12 +100,7 @@ public class RobotContainer {
     /** LiftSubsystem */
     private final LiftSubsystem m_liftSubsystem = new LiftSubsystem();
 
-    /* */
-
-    /* Lift subsystem */
-    //private final LiftSubsystem m_liftSubsystem = new LiftSubsystem();
-
-    /* autonomous dropdown menu */
+        /* autonomous dropdown menu */
     private SendableChooser<String> dropDownChooser;// = new SendableChooser<>();
     private SendableChooser<String> autonomousChooser;
     
@@ -291,8 +286,8 @@ public class RobotContainer {
             
         } // end driveTest
 
-        boolean multiDimensionMove = true;
-        if ( multiDimensionMove ) {
+        boolean multiDimensionalMove = true;
+        if ( multiDimensionalMove ) {
             final double speed = 1.0; //m/s
             final double angularSpeed = Math.PI / 4.5;
             SmartDashboard.putNumber("Test Speed", speed);
@@ -416,26 +411,26 @@ public class RobotContainer {
             */
         
         
-        /* !!!!!! Button definitions for COMPETITION !!!!!!!!  */
-        /* run intake motor in suck-in and push-out modes */
-        // povRight -> Run tube intake
+        /* run Algae intake motor in suck-in and push-out modes */
+        // rightBumper() -> Run tube intake
         joystick.rightBumper().whileTrue(ManualCommands.runIntakeCommand(m_algaeSubsystem));
 
-        // a -> Run tube intake
+        // a() -> Run tube intake
         joystick.a().whileTrue(ManualCommands.reverseIntakeCommandSlow(m_algaeSubsystem));
 
-        // povLeft -> Run tube intake in reverse
+        // leftBumper() -> Run tube intake in reverse
         joystick.leftBumper().whileTrue(ManualCommands.reverseIntakeCommand(m_algaeSubsystem));
 
-        /* run lift motor in suck-in and push-out modes */
-        // povRight -> Run tube intake
-        /* MUST reinstate for COMPETITION!!!! */
-        joystick.y().whileTrue(m_liftSubsystem.runLiftUpCommand());
-        /**/
 
-        // povLeft -> Run tube intake in reverse
-        /* MUST reinstate for COMPETITION!!!! */
-        joystick.start().whileTrue(m_liftSubsystem.runLiftDownCommand());
+        /* run lift motor in suck-in and push-out modes */
+        boolean useLiftSubsystem = false;
+        if ( useLiftSubsystem ) {
+            // y() -> Lifting the robot UP
+            joystick.y().whileTrue(m_liftSubsystem.runLiftUpCommand());
+
+            // start() -> Lowering the robot DOWN
+            joystick.start().whileTrue(m_liftSubsystem.runLiftDownCommand());
+        }
         /**/
         
         // move elevator/arm to their respective positions
