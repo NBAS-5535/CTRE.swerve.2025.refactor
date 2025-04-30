@@ -26,33 +26,6 @@ public final class Constants {
   /* Some tolerance settings */
   public static final double distanceEpsilon = 0.01;
 
-  public static final class CoralSubsystemConstants {
-    public static final int kElevatorMotorCanId = 4;
-    public static final int kArmMotorCanId = 3;
-    public static final int kIntakeMotorCanId = 2;
-
-    public static final class ElevatorSetpoints {
-      public static final int kFeederStation = 0;
-      public static final int kLevel1 = 0;
-      public static final int kLevel2 = 0;
-      public static final int kLevel3 = 100;
-      public static final int kLevel4 = 150;
-    }
-
-    public static final class ArmSetpoints {
-      public static final double kFeederStation = 33;
-      public static final double kLevel1 = 0;
-      public static final double kLevel2 = 2;
-      public static final double kLevel3 = 2;
-      public static final double kLevel4 = 19;
-    }
-
-    public static final class IntakeSetpoints {
-      public static final double kForward = 0.5;
-      public static final double kReverse = -0.5;
-    }
-  }
-
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
@@ -92,76 +65,8 @@ public final class Constants {
     public static final boolean kGyroReversed = false;
   }
 
-  public static final class ModuleConstants {
-    // The MAXSwerve module can be configured with one of three pinion gears: 12T,
-    // 13T, or 14T. This changes the drive speed of the module (a pinion gear with
-    // more teeth will result in a robot that drives faster).
-    public static final int kDrivingMotorPinionTeeth = 14;
-
-    // Calculations required for driving motor conversion factors and feed forward
-    public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
-    public static final double kWheelDiameterMeters = 0.0762;
-    public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
-    // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15
-    // teeth on the bevel pinion
-    public static final double kDrivingMotorReduction =
-        (45.0 * 22) / (kDrivingMotorPinionTeeth * 15);
-    public static final double kDriveWheelFreeSpeedRps =
-        (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters) / kDrivingMotorReduction;
-  }
-
-  public static final class OIConstants {
-    public static final int kDriverControllerPort = 0;
-    public static final double kDriveDeadband = 0.1;
-    public static final double kTriggerButtonThreshold = 0.2;
-  }
-
-  public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 3;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 3;
-    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
-
-    public static final double kPXController = 1;
-    public static final double kPYController = 1;
-    public static final double kPThetaController = 1;
-
-    // Constraint for the motion profiled robot angle controller
-    public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
-        new TrapezoidProfile.Constraints(
-            kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
-  }
-
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
-  }
-
-  public static final class SimulationRobotConstants {
-    public static final double kPixelsPerMeter = 20;
-
-    public static final double kElevatorGearing = 25; // 25:1
-    public static final double kCarriageMass =
-        4.3 + 3.15 + 0.151; // Kg, arm + elevator stage + chain
-    public static final double kElevatorDrumRadius = 0.0328 / 2.0; // m
-    public static final double kMinElevatorHeightMeters = 0.922; // m
-    public static final double kMaxElevatorHeightMeters = 1.62; // m
-
-    public static final double kArmReduction = 60; // 60:1
-    public static final double kArmLength = 0.433; // m
-    public static final double kArmMass = 4.3; // Kg
-    public static final double kMinAngleRads =
-        Units.degreesToRadians(-50.1); // -50.1 deg from horiz
-    public static final double kMaxAngleRads =
-        Units.degreesToRadians(40.9 + 180); // 40.9 deg from horiz
-
-    public static final double kIntakeReduction = 135; // 135:1
-    public static final double kIntakeLength = 0.4032262; // m
-    public static final double kIntakeMass = 5.8738; // Kg
-    public static final double kIntakeMinAngleRads = Units.degreesToRadians(80);
-    public static final double kIntakeMaxAngleRads = Units.degreesToRadians(180);
-    public static final double kIntakeShortBarLength = 0.1524;
-    public static final double kIntakeLongBarLength = 0.3048;
-    public static final double kIntakeBarAngleRads = Units.degreesToRadians(-60);
   }
 
   public static final class VisionConstants {
@@ -177,63 +82,6 @@ public final class Constants {
 
     public static final int testTagId = 3;
   }
-
-  public static final class ElevatorConstants {
-    public static int kElevatorCANId = 42;
-
-    public static double kElevatorRampRate = 0.1;
-    public static int    kElevatorCurrentLimit = 40;
-    public static double kMaxVelocity = Meters.of(4).per(Second).in(MetersPerSecond);
-    public static double kMaxVelocityInRevolutions = 4200; 
-    public static double kMaxAcceleration = Meters.of(8).per(Second).per(Second).in(MetersPerSecondPerSecond);
-    public static double kMaxAccelerationInRevolutions = 6000;
-
-    public static final double kElevatorKp = 0.1;
-    public static final double kElevatorKi = 0;
-    public static final double kElevatorKd = 0.;
-
-    public static final double kElevatorkS = 0.01964; // volts (V)
-    public static final double kElevatorkV = 3.894; // volt per velocity (V/(m/s))
-    public static final double kElevatorkA = 0.173; // volt per acceleration (V/(m/s²))
-    public static final double kElevatorkG = 0.5; // volts (V)
-
-    public static final double kBaseHeight = 0.0;
-    public static final double kBottomReefHeight = 5.0;
-    public static final double kMiddleReefHeight = 10.0;
-    public static final double kAlgaeNetHeight = 15.0;
-    
-    public static final class ElevatorSetpointHeights {
-      public static final double kBaseHeight = 0.0;
-      public static final double kBottomReefHeight = 5.0;
-      public static final double kMiddleReefHeight = 10.0;
-      public static final double kAlgaeNetHeight = 15.0;
-    }
-
-    
-  }
-
-  /* *****************
-   * ActuatorConstants
-   
-  public static final class ActuatorConstants{
-    public static final int kActuatorMotorCanId = 44;
-
-    public static double kActuatorRampRate = 0.1;
-    public static int    kActuatorCurrentLimit = 40;
-    public static double kMaxVelocity = Meters.of(4).per(Second).in(MetersPerSecond);
-    public static double kMaxAcceleration = Meters.of(8).per(Second).per(Second).in(MetersPerSecondPerSecond);
-
-    public static final double kActuatorKp = 0.1;
-    public static final double kActuatorKi = 0;
-    public static final double kActuatorKd = 0.;
-
-    // actuator control parameters
-    public static final double kSpeed = 0.1; //<---- set smaller as a test, should be 0.5ish
-    public static final double kIntermediateSetPoint = 15.; //revolutions
-    public static final double kSetPointInRevolutions = 39.; //revolutions <---- set smaller as a test, should be 40ish
-
-  }
-    */
 
     /* **************************
    * ActuatorSubsystemConstants

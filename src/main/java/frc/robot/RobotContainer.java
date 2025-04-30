@@ -20,7 +20,6 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -34,16 +33,13 @@ import frc.robot.Constants.ActuatorSubsystemConstants;
 import frc.robot.Constants.AutonomousMenuConstants;
 import frc.robot.Constants.AutonomousModeOptions;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.commands.ActuatorCommandRev;
 import frc.robot.commands.AlignCommand;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ManualCommands;
 import frc.robot.commands.OperatorFriendlyCommands;
 import frc.robot.commands.SemiAuto;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.ActuatorSubsystemRev;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LiftSubsystem;
 import frc.robot.subsystems.ActuatorSubsystem;
 import frc.robot.subsystems.ActuatorSubsystem.ActuatorSetpoints;
@@ -92,11 +88,8 @@ public class RobotContainer {
 
     /* 2025 game related subsystems */
     /* actuator to move the levator to game start position */
-    public final boolean actuatorIsRev = false;
+    //public final boolean actuatorIsRev = false;
     public final ActuatorSubsystem m_actuator = new ActuatorSubsystem();
-    //public final boolean actuatorIsRev = true;
-    //public final ActuatorSubsystemRev m_actuator = new ActuatorSubsystemRev();
-
 
     /* elevator subsystem */
     //public final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
@@ -364,42 +357,21 @@ public class RobotContainer {
         boolean actuatorTest = true;
         if (actuatorTest) {
             
-            // move the elevator to game position: direction =1
-            if ( actuatorIsRev ) {
-                /*
-                joystick.leftBumper().onTrue(
-                    new SequentialCommandGroup(
-                        new ActuatorCommandRev(m_actuator, 1, ActuatorSubsystemConstants.kSetPointInRevolutions),
-                        new InstantCommand(() -> m_actuator.stopMotor()))
-                );
-                // move elevator back to start position
-                joystick.rightBumper().onTrue(
-                    new SequentialCommandGroup(
-                        new ActuatorCommandRev(m_actuator, -1, ActuatorSubsystemConstants.kSetPointInRevolutions),
-                        new InstantCommand(() -> m_actuator.stopMotor()))
-               );
-                // move to an intermediate point
-                txbox.povRight().onTrue(
-                    new SequentialCommandGroup(
-                        new ActuatorCommandRev(m_actuator, -1, ActuatorSubsystemConstants.kIntermediateSetPoint),
-                        new InstantCommand(() -> m_actuator.stopMotor()))
-                );
-                */
-            } else {
-                /* uncomment if needed */
-                joystick.povRight().onTrue(
-                    m_actuator.setSetpointCommand(ActuatorSetpoints.kSetPointInRevolutions)
-                );
-                // move elevator back to start position
-                joystick.povLeft().onTrue(
-                    m_actuator.setSetpointCommand(ActuatorSetpoints.kBase)
-                );
-                // move to an intermediate point
-                //joystick.start().onTrue(
-                //    m_actuator.setSetpointCommand(ActuatorSetpoints.kAlgaeNetShootSetPoint)
-                //);
-                /**/
-            }
+        // move the elevator to game position: direction =1
+            /* uncomment if needed */
+            joystick.povRight().onTrue(
+                m_actuator.setSetpointCommand(ActuatorSetpoints.kSetPointInRevolutions)
+            );
+            // move elevator back to start position
+            joystick.povLeft().onTrue(
+                m_actuator.setSetpointCommand(ActuatorSetpoints.kBase)
+            );
+            // move to an intermediate point
+            //joystick.start().onTrue(
+            //    m_actuator.setSetpointCommand(ActuatorSetpoints.kAlgaeNetShootSetPoint)
+            //);
+            /**/
+            
         } // end actuator test buttons
 
         /* Algae Subsystem */
@@ -778,93 +750,4 @@ public class RobotContainer {
 
     }
 
-    /* a better menu system */
-    /*
-    public Command getAutonomousCommandTest() {
-        // some autonomous sequences
-        String caseType = scenarioChooser.getSelected(); //"path"; //"manual";
-        Command autoCommand = null;
-        String menuItem = autonomousChooser.getSelected();
-        String chosenItem = dropDownChooser.getSelected();
-        String modeOption = AutonomousModeOptions.kCorralOnly;
-        int direction = 1;
-        chosenItem = "NO ACTION";
-        switch (menuItem){
-            case AutonomousMenuConstants.kDownBlue:
-                chosenItem = "Blue_1/Red-Barge-Side";
-                if ( caseType == "path") {
-                    System.out.println(caseType + " for " + menuItem + " is NOT implemented");
-                } else {                 
-                    autoCommand = Autos.moveOffTheLine(drivetrain, Direction.kForward);
-                }
-                break;
-
-            case AutonomousMenuConstants.kCenterBlue:
-                chosenItem = "Blue_2/Center";
-                if ( caseType == "path"){
-                    autoCommand = autoChooser.getSelected();
-                } else {
-                    switch (modeOption){
-                        case AutonomousModeOptions.kCorralOnly:
-                            autoCommand = Autos.midlineStart_scoreCorralOnly(drivetrain, pigeon2Subsystem, m_algaeSubsystem, m_actuator);
-                            break;
-                        case AutonomousModeOptions.kCorralPlusAlgae:
-                            autoCommand = Autos.midlineStartCommand(drivetrain, pigeon2Subsystem, m_algaeSubsystem, m_actuator);
-                            //SmartDashboard.putString("WhatsUP?", modeOption);
-                            break;
-                        default:
-                            autoCommand = Autos.midlineStart_scoreCorralOnly(drivetrain, pigeon2Subsystem, m_algaeSubsystem, m_actuator);
-                            break;
-                    }
-                }
-                break;
-                
-            case AutonomousMenuConstants.kUpBlue:
-                chosenItem = "Blue_3/Blue-Barge-Side";
-                if ( caseType == "path") {
-                    System.out.println(caseType + " for " + menuItem + " is NOT implemented");
-                } else { 
-                    switch (modeOption){
-                        case AutonomousModeOptions.kCorralOnly:
-                            autoCommand = Autos.algaenetSideStart(drivetrain, pigeon2Subsystem, m_algaeSubsystem, m_actuator);//, direction);
-                            //autoCommand = Autos.moveOffTheLine(drivetrain, Direction.kForward);
-                    }
-                }
-                break;
-                
-            case AutonomousMenuConstants.kDownRed:
-                chosenItem = "Red_4/Red-Barge-Side";
-                //autoCommand = Autos.algaenetSideStart(drivetrain, pigeon2Subsystem, m_algaeSubsystem, m_actuator);
-                autoCommand = Autos.moveOffTheLine(drivetrain, Direction.kForward);
-                break;
-            case AutonomousMenuConstants.kCenterRed:
-                chosenItem = "Red_5/Center";
-                switch (modeOption){
-                    case AutonomousModeOptions.kCorralOnly:
-                        autoCommand = Autos.midlineStart_scoreCorralOnly(drivetrain, pigeon2Subsystem, m_algaeSubsystem, m_actuator);
-                        break;
-                    case AutonomousModeOptions.kCorralPlusAlgae:
-                        autoCommand = Autos.midlineStartCommand(drivetrain, pigeon2Subsystem, m_algaeSubsystem, m_actuator);
-                        //SmartDashboard.putString("CorralStuff", "With Algae Throw");
-                        break;
-                    default:
-                        autoCommand = Autos.midlineStart_scoreCorralOnly(drivetrain, pigeon2Subsystem, m_algaeSubsystem, m_actuator);
-                        //SmartDashboard.putString("CorralStuff", "Hit default");
-                        break;
-                }
-                break;
-            case AutonomousMenuConstants.kUpRed:
-                chosenItem = "Red_6/Blue-Barge-Side";
-                autoCommand = Autos.moveOffTheLine(drivetrain, Direction.kForward);
-                break; 
-            default:
-                chosenItem = "Nothing"; 
-            }
-
-
-        
-        return autoCommand;
-
-    }
-    */
 }
