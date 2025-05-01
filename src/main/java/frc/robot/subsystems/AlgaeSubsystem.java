@@ -156,7 +156,7 @@ public class AlgaeSubsystem extends SubsystemBase {
    * positions for the given setpoint.
    */
   public Command setSetpointCommand(Setpoint setpoint) {
-    return this.run(     // originally runOnce() without until()
+    return this.runOnce(     // originally runOnce() without until()
         () -> {
           switch (setpoint) {
             case kGroundPickup:
@@ -296,7 +296,7 @@ public class AlgaeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Elevator/Target Position", elevatorCurrentTarget);
     SmartDashboard.putNumber("Elevator/Actual Position", elevatorEncoder.getPosition());
     SmartDashboard.putNumber("Intake/Applied Output", intakeMotor.getAppliedOutput());
-    SmartDashboard.putBoolean("runPeriodic", runPeriodic);
+    //SmartDashboard.putBoolean("runPeriodic", runPeriodic);
 
     
   }
@@ -369,10 +369,15 @@ public class AlgaeSubsystem extends SubsystemBase {
     double armCurrentPosition = armEncoder.getPosition();
     double elevatorCurrentPosition = elevatorEncoder.getPosition();
 
-    if ( ( Math.abs(armCurrentPosition) >= Math.abs(armTarget) - Constants.distanceEpsilon) &&
-         ( Math.abs(elevatorCurrentPosition) >= Math.abs(elevatorTarget) - Constants.distanceEpsilon) ) {
+    SmartDashboard.putNumber("SetpointInfo/ArmTarget Position", armTarget);
+    SmartDashboard.putNumber("SetpointInfo/ElevatorTarget Position", elevatorTarget);
+
+    if ( ( Math.abs(armCurrentPosition) >= Math.abs(armTarget) + Constants.distanceEpsilon) &&
+         ( Math.abs(elevatorCurrentPosition) >= Math.abs(elevatorTarget) + Constants.distanceEpsilon) ) {
+          SmartDashboard.putBoolean("isSetpointReached", true);
           return true;
-         }
+    }
+    SmartDashboard.putBoolean("isSetpointReached", false);
     return false;
   }
 

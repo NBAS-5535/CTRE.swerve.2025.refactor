@@ -438,10 +438,11 @@ public class RobotContainer {
             .a()
                 .onTrue(
                     //m_algaeSubsystem.setSetpointCommand(Setpoint.kAlgaePickupLowerReef)
-                    new SequentialCommandGroup(
-                            m_algaeSubsystem.setSetpointCommand(Setpoint.kClearWires),
-                            m_algaeSubsystem.setSetpointCommand(Setpoint.kAlgaePickupLowerReef),
-                            m_actuator.setSetpointCommand(ActuatorSetpoints.kSetPointInRevolutions)
+                    //new SequentialCommandGroup(
+                            m_algaeSubsystem.setSetpointCommand(Setpoint.kClearWires)//,
+                                .andThen(m_actuator.setSetpointCommand(ActuatorSetpoints.kSetPointInRevolutions)
+                                .andThen(m_algaeSubsystem.setSetpointCommand(Setpoint.kAlgaePickupLowerReef))
+                                
                     )    
         );
 
@@ -449,10 +450,11 @@ public class RobotContainer {
             .b()
                 .onTrue(
                     new SequentialCommandGroup(
-                        m_algaeSubsystem.setSetpointCommand(Setpoint.kClearWires),
-                        m_algaeSubsystem.setSetpointCommand(Setpoint.kAlgaePickupHigherReef),
-                        Commands.waitSeconds(1.),
-                        m_actuator.setSetpointCommand(ActuatorSetpoints.kSetPointInRevolutions)
+                        m_algaeSubsystem.setSetpointCommand(Setpoint.kClearWires)//,
+                            .andThen(m_actuator.setSetpointCommand(ActuatorSetpoints.kSetPointInRevolutions))
+                            .andThen(m_algaeSubsystem.setSetpointCommand(Setpoint.kAlgaePickupHigherReef))//,
+                        //Commands.waitSeconds(1.),
+                        //m_actuator.setSetpointCommand(ActuatorSetpoints.kSetPointInRevolutions)
                     )
                     //m_algaeSubsystem.setSetpointCommand(Setpoint.kAlgaePickupHigherReef)                   
         );
@@ -484,9 +486,9 @@ public class RobotContainer {
             .rightBumper()
                 .onTrue(
                     new SequentialCommandGroup(
-                        m_algaeSubsystem.setSetpointCommand(Setpoint.kMoveWithBall),
-                        Commands.waitSeconds(0.5),
-                        m_algaeSubsystem.setSetpointCommand(Setpoint.kSideSlotShoot),
+                        m_algaeSubsystem.setSetpointCommand(Setpoint.kMoveWithBall)//,
+                        //Commands.waitSeconds(0.5),
+                            .andThen( m_algaeSubsystem.setSetpointCommand(Setpoint.kSideSlotShoot)),
                         m_actuator.setSetpointCommand(ActuatorSetpoints.kSetPointInRevolutions)
                     )    
         );
