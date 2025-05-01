@@ -360,25 +360,31 @@ public class AlgaeSubsystem extends SubsystemBase {
    * Method to compare current encoder reading with the setpoins 
    * To be used to ensure the arm/elevator motion is not prematurely terminated
    */
-  //public boolean isSetpointReached(double armTarget, double elevatorTarget){
   public boolean isSetpointReached(Setpoint setpoint){
     double[] currentSetpointDetails = getSetpointDetails(setpoint);
     double armTarget = currentSetpointDetails[0];
     double elevatorTarget = currentSetpointDetails[1];
 
-    double armCurrentPosition = armEncoder.getPosition();
-    double elevatorCurrentPosition = elevatorEncoder.getPosition();
+    double armDiff = Math.abs(armEncoder.getPosition() - armTarget); ;
+    double elevatorDiff = Math.abs(elevatorEncoder.getPosition() - elevatorTarget);
 
-    SmartDashboard.putNumber("SetpointInfo/ArmTarget Position", armTarget);
-    SmartDashboard.putNumber("SetpointInfo/ElevatorTarget Position", elevatorTarget);
+    SmartDashboard.putNumber("SetpointInfo/ArmTarget Position", armDiff);
+    SmartDashboard.putNumber("SetpointInfo/ElevatorTarget Position", elevatorDiff);
 
-    if ( ( Math.abs(armCurrentPosition) >= Math.abs(armTarget) + Constants.distanceEpsilon) &&
-         ( Math.abs(elevatorCurrentPosition) >= Math.abs(elevatorTarget) + Constants.distanceEpsilon) ) {
+    /*
+    if ( armState <= AlgaeSubsystemConstants.ArmSetpointThreshold && 
+         elevatorState  <= AlgaeSubsystemConstants.ElevatorSetpointThreshold ) {
           SmartDashboard.putBoolean("isSetpointReached", true);
           return true;
     }
     SmartDashboard.putBoolean("isSetpointReached", false);
     return false;
+    */
+    
+    boolean condition = ( armDiff <= AlgaeSubsystemConstants.ArmSetpointThreshold && 
+                          elevatorDiff  <= AlgaeSubsystemConstants.ElevatorSetpointThreshold)  ? true : false;
+    SmartDashboard.putBoolean("isSetpointReached", condition);  
+    return condition;
   }
 
   public void resetPeriodicMode() {

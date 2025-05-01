@@ -123,6 +123,9 @@ public final class Constants {
     public static final double ElevatorSetpointTestSpeed = 0.1;
     public static final double ArmSetpointTestSpeed = 0.2;
   
+    public static final double ElevatorSetpointThreshold = 0.5;
+    public static final double ArmSetpointThreshold = 0.5;
+
     public static final class ElevatorSetpoints {
       public static final double kGroundPick = 26.04; //44.72;
       public static final double kSideShoot = 41.91; //61.85;
