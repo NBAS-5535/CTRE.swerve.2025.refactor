@@ -156,7 +156,7 @@ public class AlgaeSubsystem extends SubsystemBase {
    * positions for the given setpoint.
    */
   public Command setSetpointCommand(Setpoint setpoint) {
-    return this.runOnce(     // originally runOnce() without until()
+    return this.run(     // originally runOnce() without until()
         () -> {
           switch (setpoint) {
             case kGroundPickup:
