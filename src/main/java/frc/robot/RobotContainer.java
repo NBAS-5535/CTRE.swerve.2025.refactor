@@ -437,18 +437,23 @@ public class RobotContainer {
         txbox
             .a()
                 .onTrue(
+                    /*
                     //m_algaeSubsystem.setSetpointCommand(Setpoint.kAlgaePickupLowerReef)
                     //new SequentialCommandGroup(
                             m_algaeSubsystem.setSetpointCommand(Setpoint.kClearWires)//,
                                 .andThen(m_actuator.setSetpointCommand(ActuatorSetpoints.kSetPointInRevolutions)
                                 .andThen(m_algaeSubsystem.setSetpointCommand(Setpoint.kAlgaePickupLowerReef))
-                                
-                    )    
+                    */
+                    m_algaeSubsystem.setSetpointCommand(Setpoint.kAlgaePickupLowerReef)
+                        .alongWith(m_actuator.setSetpointCommand(ActuatorSetpoints.kSetPointInRevolutions))             
         );
 
         txbox
             .b()
                 .onTrue(
+                    m_algaeSubsystem.setSetpointCommand(Setpoint.kAlgaePickupHigherReef)
+                        .alongWith(m_actuator.setSetpointCommand(ActuatorSetpoints.kSetPointInRevolutions))
+                    /*
                     new SequentialCommandGroup(
                         m_algaeSubsystem.setSetpointCommand(Setpoint.kClearWires)//,
                             .andThen(m_actuator.setSetpointCommand(ActuatorSetpoints.kSetPointInRevolutions))
@@ -456,7 +461,8 @@ public class RobotContainer {
                         //Commands.waitSeconds(1.),
                         //m_actuator.setSetpointCommand(ActuatorSetpoints.kSetPointInRevolutions)
                     )
-                    //m_algaeSubsystem.setSetpointCommand(Setpoint.kAlgaePickupHigherReef)                   
+                    //m_algaeSubsystem.setSetpointCommand(Setpoint.kAlgaePickupHigherReef)
+                    */                   
         );
         
         txbox
@@ -542,9 +548,9 @@ public class RobotContainer {
                                                                  m_algaeSubsystem.runIntakeCommand().withTimeout(0.25)));
         NamedCommands.registerCommand("StraightenActuator", m_actuator.setSetpointCommand(ActuatorSetpoints.kSetPointInRevolutions));
         NamedCommands.registerCommand("ReadyForAlgaePickup", 
-                                      new SequentialCommandGroup(m_algaeSubsystem.setSetpointCommand(Setpoint.kClearWires),
+                                      new SequentialCommandGroup(//m_algaeSubsystem.setSetpointCommand(Setpoint.kClearWires),
                                                                  m_algaeSubsystem.setSetpointCommand(Setpoint.kClearReef),
-                                                                 Commands.waitSeconds(0.25),
+                                                                 //Commands.waitSeconds(0.25),
                                                                  m_algaeSubsystem.setSetpointCommand(Setpoint.kAlgaePickupLowerReef)));
         NamedCommands.registerCommand("IntakeAlgaeFromReef", m_algaeSubsystem.runIntakeCommand().withTimeout(0.25));
         NamedCommands.registerCommand("GoToHighReefPickupPosition", m_algaeSubsystem.setSetpointCommand(Setpoint.kAlgaePickupHigherReef));
