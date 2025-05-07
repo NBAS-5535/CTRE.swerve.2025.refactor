@@ -158,6 +158,7 @@ public class AlgaeSubsystem extends SubsystemBase {
   public Command setSetpointCommand(Setpoint setpoint) {
     return this.run(     // originally runOnce() without until()
         () -> {
+          /*
           switch (setpoint) {
             case kGroundPickup:
               armCurrentTarget = ArmSetpoints.kGroundPick;
@@ -204,6 +205,9 @@ public class AlgaeSubsystem extends SubsystemBase {
               elevatorCurrentTarget = ElevatorSetpoints.kAlgaeNet;
               break;
           }
+          */
+          armCurrentTarget = getSetpointDetails(setpoint)[0];
+          elevatorCurrentTarget = getSetpointDetails(setpoint)[1];
           this.moveToSetpoint();
         })
         .until(() -> this.isSetpointReached(setpoint));
