@@ -73,14 +73,14 @@ public final class Constants {
     public static final String LIMELIGHT_NAME = "";
 
     // height of the center of the Limelight lens from the floor (inches)
-    public static final double limelightLensHeightInches = 3.5;
+    public static final double limelightLensHeightInches = 10.;
     // height of the target from the floor (inches)
     public static final double targetHeightInches = 33.5;
 
     // calibration distance for correct mount angle
     public static final double knownDistance = 10.;
 
-    public static final int testTagId = 3;
+    public static final int testTagId = 5;
   }
 
     /* **************************

@@ -218,7 +218,7 @@ public class RobotContainer {
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        boolean pidTest = false;
+        boolean pidTest = true;
         if (pidTest) {
             double timeOut = 1.;
             joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));//.withTimeout(timeOut));
@@ -321,7 +321,7 @@ public class RobotContainer {
         } // end driveTest
 
         /* Vision Subsystem */
-        boolean visionTest = false;
+        boolean visionTest = true;
         if (visionTest) {
             // get vision-based distance
             //joystick.x().onTrue(new InstantCommand(() -> limelight.getDistanceToTarget()));
