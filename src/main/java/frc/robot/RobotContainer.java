@@ -366,6 +366,10 @@ public class RobotContainer {
              * povUp()
              * povDown()
             */
+            /* get mindistance info */
+            joystick.povUp().onTrue(
+                new InstantCommand(() -> m_vision.getDistanceToTargetInMeters(m_vision.getMinDistance())
+            ));
         } // end visionTest
 
         /* Actuator Subsystem */

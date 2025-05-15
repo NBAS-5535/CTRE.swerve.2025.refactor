@@ -74,10 +74,6 @@ public class VisionSubsystem extends SubsystemBase {
 
     RawFiducial closest = fiducials[0];
     double minDistance = closest.ta;
-    SmartDashboard.putNumber("minDistance", minDistance);
-
-    /* persist closest distance value */
-    setMinDistance(minDistance);
 
     for (RawFiducial fiducial : fiducials) {
         if (fiducial.ta > minDistance) {
@@ -85,6 +81,10 @@ public class VisionSubsystem extends SubsystemBase {
             minDistance = fiducial.ta;
         }
     }
+    SmartDashboard.putNumber("minDistance", minDistance);
+
+    /* persist closest distance value */
+    setMinDistance(minDistance);
 
     return closest;
   }
@@ -128,7 +128,9 @@ public RawFiducial getFiducialWithId(int id, boolean verbose) {
   /* calculate the distance in meters */
   public double getDistanceToTargetInMeters(double distance) {
     /* use/update estimation formula via resgression*/
-    return -70.08 * distance + 2.35; 
+    double distInMeters = -70.08 * distance + 2.35; 
+    System.out.print(distance + " - " + distInMeters);
+    return distInMeters;
   }
 
   /* utility functions */
