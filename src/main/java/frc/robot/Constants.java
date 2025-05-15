@@ -81,6 +81,8 @@ public final class Constants {
     public static final double knownDistance = 10.;
 
     public static final int testTagId = 5;
+
+    public static final int numberOfTags = 22; // how many AprilTags exist in the game
   }
 
     /* **************************

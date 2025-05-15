@@ -104,8 +104,11 @@ public class RobotContainer {
     private SendableChooser<String> dropDownChooser;// = new SendableChooser<>();
     private SendableChooser<String> autonomousChooser;
     
-    /* scenario tyep menu */
+    /* scenario type menu */
     private SendableChooser<String> scenarioChooser;
+
+    /* Limelight vision Apriltag chooser */
+    private SendableChooser<Integer> aprilTagChooser;
 
     /* submenu */
     //private final SendableChooser<SendableChooser<String>> mainMenuChooser;
@@ -145,6 +148,14 @@ public class RobotContainer {
         scenarioChooser.setDefaultOption("Manually-Generated", "manual");
         scenarioChooser.addOption("PathPlanner", "path");
         SmartDashboard.putData("Scenario Type", scenarioChooser);
+
+        /* AprilTag for vision chooser */
+        aprilTagChooser = new SendableChooser<>();
+        aprilTagChooser.setDefaultOption("No Pick", 0);
+        for ( int i = 1 ; i <= VisionConstants.numberOfTags; i++) {
+            aprilTagChooser.addOption("TagID: " + String.valueOf(i), i);
+        }
+        SmartDashboard.putData("AprilTag Options", aprilTagChooser);
 
         /*
         mainMenuChooser = new SendableChooser<SendableChooser<String>>();
@@ -286,7 +297,7 @@ public class RobotContainer {
             
         } // end driveTest
 
-        boolean multiDimensionalMove = true;
+        boolean multiDimensionalMove = false;
         if ( multiDimensionalMove ) {
             final double speed = 1.0; //m/s
             final double angularSpeed = Math.PI / 4.5;
@@ -323,12 +334,15 @@ public class RobotContainer {
         /* Vision Subsystem */
         boolean visionTest = true;
         if (visionTest) {
+            /* pick an Apriltag ID from the menu */
+            int aprilTagID = aprilTagChooser.getSelected();
+
             // get vision-based distance
-            //joystick.x().onTrue(new InstantCommand(() -> limelight.getDistanceToTarget()));
+            //joystick.x().onTrue(new InstantCommand(() -> m_vision.getDistanceToTarget()));
             /* onTrue: robot moves until the alignment is completed
             *  whileTrue: must press the button until the alignment is completed
             */
-            //joystick.back().onTrue(new AlignCommand(drivetrain, m_vision, VisionConstants.testTagId));
+            joystick.x().onTrue(new AlignCommand(drivetrain, m_vision, aprilTagID));
             /* simulate a sequence:
             * align with AprilTag
             * Move forward by 2 meters
@@ -341,11 +355,17 @@ public class RobotContainer {
                 testTagId = 0;
             }
             
-            joystick.back().onTrue(new SequentialCommandGroup(
+            joystick.y().onTrue(new SequentialCommandGroup(
+                new InstantCommand(() -> drivetrain.setCurrentPose()),
                 new AlignCommand(drivetrain, m_vision, testTagId),
                 //drivetrain.applyRequest(() -> brake),
                 drivetrain.sysIdDynamic(Direction.kForward).until(() -> drivetrain.isDesiredPoseReached(1.))
             ));
+
+            /* available joystick slots for further testing
+             * povUp()
+             * povDown()
+            */
         } // end visionTest
 
         /* Actuator Subsystem */
