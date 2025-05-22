@@ -37,7 +37,9 @@ public class FindAprilTagCommand extends Command {
     private static final SwerveRequest.RobotCentric alignRequest = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private static final SwerveRequest.Idle idleRequest = new SwerveRequest.Idle();
   private static final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  public double rotationalRate = 0;
+  public double rotationalRate = 0.1;
+  private RawFiducial fiducial; 
+  private double targetAreaTolerance = 0.5;
 
   public FindAprilTagCommand(CommandSwerveDrivetrain drivetrain, VisionSubsystem limelight, int tagId) {
     this.m_drivetrain = drivetrain;
@@ -55,8 +57,6 @@ public class FindAprilTagCommand extends Command {
   @Override
   public void execute() {
     
-    RawFiducial fiducial; 
-
     try {
       if (m_tagId == 0) {
         fiducial = m_limelight.getClosestFiducial();
@@ -64,28 +64,20 @@ public class FindAprilTagCommand extends Command {
         fiducial = m_limelight.getFiducialWithId(m_tagId);
       }
 
-      rotationalRate = rotationalPidController.calculate(2*fiducial.txnc, 0.0) * 0.75* 0.9;
-         
-      /*
-      if (rotationalPidController.atSetpoint()) {
-        this.end(true);
-      }
-      */
-
       /* check if a valid target was found */
-      if ( m_limelight.getTV() ) { //&& rotationalPidController.atSetpoint()) {
+      if ( fiducial.ta > targetAreaTolerance ) { //&& rotationalPidController.atSetpoint()) {
         this.end(true);
       }
 
-      SmartDashboard.putNumber("txnc", fiducial.txnc);
-      SmartDashboard.putNumber("distToRobot", fiducial.distToRobot);
-      SmartDashboard.putNumber("rotationalPidController", rotationalRate);
-      SmartDashboard.putNumber("TagID", m_tagId);
+      SmartDashboard.putNumber("FindAprilTag/txnc", fiducial.txnc);
+      SmartDashboard.putNumber("FindAprilTag/distToRobot", fiducial.distToRobot);
+      SmartDashboard.putNumber("FindAprilTag/area", fiducial.ta);
+      SmartDashboard.putNumber("FindAprilTag/TagID", m_tagId);
       /* uncomment for action */
       m_drivetrain.setControl(alignRequest.withRotationalRate(rotationalRate));
 
     } catch (VisionSubsystem.NoSuchTargetException nste) { 
-      System.out.println("No apriltag found");
+      System.out.println(getName() + " - No apriltag found");
       if (rotationalRate != 0){
         /* uncomment for action */
         m_drivetrain.setControl(alignRequest.withRotationalRate(rotationalRate));
@@ -95,8 +87,8 @@ public class FindAprilTagCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    boolean temp = m_limelight.getTV(); //rotationalPidController.atSetpoint();
-    SmartDashboard.putBoolean("FoundAprilTag", temp);
+    boolean temp = fiducial.ta > targetAreaTolerance; //rotationalPidController.atSetpoint();
+    SmartDashboard.putBoolean("FindAprilTag/FoundAprilTag", temp);
     return temp;
   }
 
