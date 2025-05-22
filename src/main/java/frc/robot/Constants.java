@@ -7,12 +7,16 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+
+import frc.robot.generated.TunerConstants;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -200,5 +204,17 @@ public final class Constants {
   public static final class AutonomousModeOptions{
     public static final String kCorralOnly = "Corral-Only";
     public static final String kCorralPlusAlgae = "Corral-And-HighReef-Pickup";
+  }
+
+  /* *********************
+   * DriveTrainConstants
+   */
+  public static final class DriveTrainConstants{
+    /* Moved from RobotContainer */
+  public static final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+  public static final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a
+                                                                                                // rotation per
+                                                                                                // second
+  // max angular velocity
   }
 }
