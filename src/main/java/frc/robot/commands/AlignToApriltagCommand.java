@@ -14,11 +14,11 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Vision.LimelightHelpers.LimelightTarget_Fiducial;
-import frc.robot.Vision.LimelightHelpers.RawFiducial;
 
-public class AlignToApriltag extends Command {
+public class AlignToApriltagCommand extends Command {
   private final CommandSwerveDrivetrain drivetrain;
   private final LimelightSubsystem limelight;
+  private final int aprilTagId;
 
   private static final PIDControllerConfigurable rotationalPidController = new PIDControllerConfigurable(
       1.8, 0.05, 0, 0.4);
@@ -31,26 +31,28 @@ public class AlignToApriltag extends Command {
   // private static final SwerveRequest.SwerveDriveBrake brake = new
   // SwerveRequest.SwerveDriveBrake();
 
-  public AlignToApriltag(CommandSwerveDrivetrain drivetrain, LimelightSubsystem limelight) {
+  public AlignToApriltagCommand(CommandSwerveDrivetrain drivetrain, LimelightSubsystem limelight, int id) {
     this.drivetrain = drivetrain;
     this.limelight = limelight;
+    this.aprilTagId = id;
     // addRequirements(this.drivetrain, this.limelight);
   }
 
   @Override
   public void initialize() {
-    System.out.println("COMMAND RAN");
+    System.out.println("AlignToApriltag_COMMAND Started");
   }
 
   @Override
   public void execute() {
     LimelightTarget_Fiducial fiducial;
     try {
-      fiducial = limelight.getTargetFiducialWithId(21);
+      fiducial = limelight.getTargetFiducialWithId(aprilTagId); // was set to 21
       Pose3d targetPoseInRobotSpace = fiducial.getTargetPose_CameraSpace();
       double distToRobot = targetPoseInRobotSpace.getZ();
       double sideError = targetPoseInRobotSpace.getX();
-      SmartDashboard.putNumber("getRotation", targetPoseInRobotSpace.getRotation().getY());
+      SmartDashboard.putNumber("AlignToApriltag/getRotation", targetPoseInRobotSpace.getRotation().getY());
+      SmartDashboard.putNumber("AlignToApriltag/TEST", distToRobot);
       double rotationalError = targetPoseInRobotSpace.getRotation().getY();
 
       double rotationalRate = rotationalPidController.calculate(rotationalError, 0)
@@ -76,27 +78,29 @@ public class AlignToApriltag extends Command {
       // this.end(true);
       // }
 
-      SmartDashboard.putNumber("txnc", fiducial.tx_nocrosshair);
-      SmartDashboard.putNumber("distToRobot", distToRobot);
-      SmartDashboard.putNumber("rotationalPidController", rotationalRate);
-      SmartDashboard.putNumber("xPidController", velocityX);
+      SmartDashboard.putNumber("AlignToApriltag/txnc", fiducial.tx_nocrosshair);
+      SmartDashboard.putNumber("AlignToApriltag/distToRobot", distToRobot);
+      SmartDashboard.putNumber("AlignToApriltag/rotationalPidController", rotationalRate);
+      SmartDashboard.putNumber("AlignToApriltag/xPidController", velocityX);
       drivetrain.setControl(
           alignRequest.withVelocityX(velocityX)
               .withVelocityY(velocityY));
       drivetrain.setControl(alignRequest.withRotationalRate(rotationalRate));
     } catch (LimelightSubsystem.NoSuchTargetException nste) {
-      SmartDashboard.putNumber("TEST", -1);
+      SmartDashboard.putNumber("AlignToApriltag/TEST", -1);
     }
   }
 
   @Override
   public boolean isFinished() {
+    System.out.println("AlignToApriltag_COMMAND IsFinished!");
     return rotationalPidController.atSetpoint() && xPidController.atSetpoint() && yPidController.atSetpoint();
     // return false;
   }
 
   @Override
   public void end(boolean interrupted) {
+    System.out.println("AlignToApriltag_COMMAND ENDED!");
     drivetrain.applyRequest(() -> idleRequest);
   }
 }
