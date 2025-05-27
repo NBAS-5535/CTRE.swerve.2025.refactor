@@ -14,12 +14,13 @@ import frc.robot.Vision.LimelightHelpers.LimelightTarget_Fiducial;
 import frc.robot.Vision.LimelightHelpers.RawFiducial;
 
 public class LimelightSubsystem extends SubsystemBase {
-  private final LimelightConfig limelightConfig;
-  private final String limelightName;
+  //private final LimelightConfig limelightConfig;
+  private final String limelightName = "";
 
   private RawFiducial[] fiducials;
   private LimelightResults limelightResults;
 
+  /*
   public LimelightSubsystem(LimelightConfig limelightConfig) {
     this.limelightConfig = limelightConfig;
     this.limelightName = this.limelightConfig.name();
@@ -33,12 +34,29 @@ public class LimelightSubsystem extends SubsystemBase {
         this.limelightConfig.pitch(),
         this.limelightConfig.yaw());
     // LimelightHelpers.SetFiducialIDFiltersOverride("", new int[] { 1, 4 });
+    */
+  public LimelightSubsystem(){
+    config();
   }
+  
 
   public static class NoSuchTargetException extends RuntimeException {
     public NoSuchTargetException(String message) {
       super(message);
     }
+  }
+  
+  public void config() {
+
+    // LimelightHelpers.setCropWindow("", -0.5, 0.5, -0.5, 0.5);
+    LimelightHelpers.setCameraPose_RobotSpace(
+        "",
+        0.38, //meters Meters.convertFrom(30. / 2., Inches), // forward location wrt robot center
+        0.25, // assume perfect alignment with robor center
+        0.26, //m Meters.convertFrom(VisionConstants.limelightLensHeightInches, Inches), // height of camera from the floor
+        0,
+        0,
+        0);
   }
 
   @Override

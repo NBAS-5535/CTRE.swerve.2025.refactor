@@ -34,7 +34,10 @@ import frc.robot.Constants.AutonomousMenuConstants;
 import frc.robot.Constants.AutonomousModeOptions;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AlignCommand;
+import frc.robot.commands.AlignToApriltagCommand;
 import frc.robot.commands.Autos;
+import frc.robot.commands.FindAprilTagCommand;
+import frc.robot.commands.FollowAprilTagCommand;
 import frc.robot.commands.ManualCommands;
 import frc.robot.commands.OperatorFriendlyCommands;
 import frc.robot.commands.SemiAuto;
@@ -83,7 +86,7 @@ public class RobotContainer {
 
     /* Limelight */
     /* initial attempt */
-    //public final VisionSubsystem_Test limelight = new VisionSubsystem_Test();
+    public final LimelightSubsystem limelight = new LimelightSubsystem();
     private final VisionSubsystem m_vision = new VisionSubsystem();
 
     /* 2025 game related subsystems */
@@ -367,9 +370,14 @@ public class RobotContainer {
              * povDown()
             */
             /* get mindistance info */
-            joystick.povUp().onTrue(
-                new InstantCommand(() -> m_vision.getDistanceToTargetInMeters(m_vision.getMinDistance())
-            ));
+            joystick.povUp().whileTrue(
+                new AlignToApriltagCommand(drivetrain, limelight, 1)
+            );
+
+            joystick.povDown().onTrue(
+                new FollowAprilTagCommand(drivetrain, limelight, 1)
+            );
+
         } // end visionTest
 
         /* Actuator Subsystem */

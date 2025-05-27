@@ -40,7 +40,7 @@ public class AlignToApriltagCommand extends Command {
 
   @Override
   public void initialize() {
-    System.out.println("AlignToApriltag_COMMAND Started");
+    //System.out.println("AlignToApriltag_COMMAND Started");
   }
 
   @Override
@@ -88,6 +88,7 @@ public class AlignToApriltagCommand extends Command {
       drivetrain.setControl(alignRequest.withRotationalRate(rotationalRate));
     } catch (LimelightSubsystem.NoSuchTargetException nste) {
       SmartDashboard.putNumber("AlignToApriltag/TEST", -1);
+      SmartDashboard.putNumber("AlignToApriltag/TagId", aprilTagId);
     }
   }
 
@@ -100,7 +101,7 @@ public class AlignToApriltagCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    System.out.println("AlignToApriltag_COMMAND ENDED!");
+    //System.out.println("AlignToApriltag_COMMAND ENDED!");
     drivetrain.applyRequest(() -> idleRequest);
   }
 }
