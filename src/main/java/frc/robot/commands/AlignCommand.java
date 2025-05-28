@@ -29,8 +29,8 @@ public class AlignCommand extends Command {
   private final VisionSubsystem m_limelight;
   private int m_tagId;
 
-  private static final PIDControllerConfigurable rotationalPidController = new PIDControllerConfigurable(0.05000, 0.000000, 0.001000, 0.01);
-  private static final PIDControllerConfigurable xPidController = new PIDControllerConfigurable(0.400000, 0.000000, 0.000600, 0.01);
+  private static final PIDControllerConfigurable rotationalPidController = new PIDControllerConfigurable(0.05000, 0.000000, 0.001000, 0.1);
+  private static final PIDControllerConfigurable xPidController = new PIDControllerConfigurable(0.400000, 0.000000, 0.000600, 0.2);
   private static final PIDControllerConfigurable yPidController = new PIDControllerConfigurable(0.3, 0, 0, 0.3);
   private static final SwerveRequest.RobotCentric alignRequest = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private static final SwerveRequest.Idle idleRequest = new SwerveRequest.Idle();
@@ -61,6 +61,7 @@ public class AlignCommand extends Command {
         fiducial = m_limelight.getClosestFiducial();
       } else {
         fiducial = m_limelight.getFiducialWithId(m_tagId);
+        //System.out.println("got it! " + String.valueOf(m_tagId));
       }
 
       rotationalRate = rotationalPidController.calculate(2*fiducial.txnc, 0.0) * 0.75* 0.9;
@@ -68,14 +69,16 @@ public class AlignCommand extends Command {
       final double velocityX = xPidController.calculate(fiducial.distToRobot, 0.1) * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.7;
         
       if (rotationalPidController.atSetpoint() && xPidController.atSetpoint()) {
+        System.out.println("STOP alignment");
         this.end(true);
       }
 
-      SmartDashboard.putNumber("txnc", fiducial.txnc);
-      SmartDashboard.putNumber("distToRobot", fiducial.distToRobot);
-      SmartDashboard.putNumber("rotationalPidController", rotationalRate);
-      SmartDashboard.putNumber("xPidController", velocityX);
-      SmartDashboard.putNumber("TagID", m_tagId);
+      SmartDashboard.putNumber("AlignCommand/txnc", fiducial.txnc);
+      SmartDashboard.putNumber("AlignCommand/ta", fiducial.ta);
+      SmartDashboard.putNumber("AlignCommand/distToRobot", fiducial.distToRobot);
+      SmartDashboard.putNumber("AlignCommand/rotationalPidController", rotationalRate);
+      SmartDashboard.putNumber("AlignCommand/xPidController", velocityX);
+      SmartDashboard.putNumber("AlignCommand/TagID", m_tagId);
       /* uncomment for action */
       m_drivetrain.setControl(
         // MAY WANNA VERIFY MOTION DIRECTIONS!!!!!!
@@ -87,7 +90,7 @@ public class AlignCommand extends Command {
       // drivetrain.setControl(brake);
       /**/
     } catch (VisionSubsystem.NoSuchTargetException nste) { 
-      System.out.println("No apriltag found");
+      //System.out.println("No apriltag found");
       if ((rotationalRate != 0) && (velocityX != 0)){
         /* uncomment for action */
         m_drivetrain.setControl(

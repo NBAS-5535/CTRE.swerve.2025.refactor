@@ -90,6 +90,8 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   public RawFiducial getRawFiducialWithId(int id) {
+    SmartDashboard.putNumber("LimelightSubsystem/id", id);
+    SmartDashboard.putNumber("LimelightSubsystem/found", fiducials.length);
     for (RawFiducial fiducial : fiducials) {
       if (fiducial.id != id) {
         continue;

@@ -91,6 +91,7 @@ public class AlignToApriltagCommand extends Command {
     } catch (LimelightSubsystem.NoSuchTargetException nste) {
       SmartDashboard.putNumber("AlignToApriltag/TEST", -1);
       SmartDashboard.putNumber("AlignToApriltag/TagId", aprilTagId);
+      drivetrain.setControl(alignRequest.withRotationalRate(0.1));
     }
   }
 
