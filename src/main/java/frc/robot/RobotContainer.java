@@ -86,7 +86,7 @@ public class RobotContainer {
 
     /* Limelight */
     /* initial attempt */
-    public final LimelightSubsystem limelight = new LimelightSubsystem();
+    private final LimelightSubsystem limelight = new LimelightSubsystem();
     private final VisionSubsystem m_vision = new VisionSubsystem();
 
     /* 2025 game related subsystems */
@@ -338,7 +338,8 @@ public class RobotContainer {
         boolean visionTest = true;
         if (visionTest) {
             /* pick an Apriltag ID from the menu */
-            int aprilTagID = aprilTagChooser.getSelected();
+            //int aprilTagID = aprilTagChooser.getSelected();
+            int aprilTagID = 1;
 
             // get vision-based distance
             //joystick.x().onTrue(new InstantCommand(() -> m_vision.getDistanceToTarget()));
@@ -362,7 +363,7 @@ public class RobotContainer {
                 new InstantCommand(() -> drivetrain.setCurrentPose()),
                 new AlignCommand(drivetrain, m_vision, testTagId),
                 //drivetrain.applyRequest(() -> brake),
-                drivetrain.sysIdDynamic(Direction.kForward).until(() -> drivetrain.isDesiredPoseReached(1.))
+                drivetrain.sysIdDynamic(Direction.kForward).withTimeout(1.)//.until(() -> drivetrain.isDesiredPoseReached(1.))
             ));
 
             /* available joystick slots for further testing
@@ -371,11 +372,11 @@ public class RobotContainer {
             */
             /* get mindistance info */
             joystick.povUp().whileTrue(
-                new AlignToApriltagCommand(drivetrain, limelight, 1)
+                new AlignToApriltagCommand(drivetrain, limelight, aprilTagID)
             );
 
-            joystick.povDown().onTrue(
-                new FollowAprilTagCommand(drivetrain, limelight, 1)
+            joystick.povDown().whileTrue(
+                new FollowAprilTagCommand(drivetrain, limelight, aprilTagID)
             );
 
         } // end visionTest

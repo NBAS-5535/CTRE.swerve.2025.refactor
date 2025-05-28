@@ -35,7 +35,7 @@ public class AlignToApriltagCommand extends Command {
     this.drivetrain = drivetrain;
     this.limelight = limelight;
     this.aprilTagId = id;
-    // addRequirements(this.drivetrain, this.limelight);
+    addRequirements(this.drivetrain, this.limelight);
   }
 
   @Override
@@ -46,6 +46,8 @@ public class AlignToApriltagCommand extends Command {
   @Override
   public void execute() {
     LimelightTarget_Fiducial fiducial;
+    SmartDashboard.putNumber("AlignToApriltag/TEST", 0);
+    SmartDashboard.putNumber("AlignToApriltag/Id", aprilTagId);
     try {
       fiducial = limelight.getTargetFiducialWithId(aprilTagId); // was set to 21
       Pose3d targetPoseInRobotSpace = fiducial.getTargetPose_CameraSpace();
@@ -94,14 +96,16 @@ public class AlignToApriltagCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    System.out.println("AlignToApriltag_COMMAND IsFinished!");
-    return rotationalPidController.atSetpoint() && xPidController.atSetpoint() && yPidController.atSetpoint();
-    // return false;
+    boolean temp = rotationalPidController.atSetpoint() && xPidController.atSetpoint() && yPidController.atSetpoint();
+    if ( temp ) {
+      System.out.println("AlignToApriltag_COMMAND IsFinished!");
+    }
+    return temp;
   }
 
   @Override
   public void end(boolean interrupted) {
-    //System.out.println("AlignToApriltag_COMMAND ENDED!");
+    System.out.println("AlignToApriltag_COMMAND ENDED!");
     drivetrain.applyRequest(() -> idleRequest);
   }
 }

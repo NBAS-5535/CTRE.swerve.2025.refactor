@@ -40,13 +40,14 @@ public class FollowAprilTagCommand extends Command {
 
   @Override
   public void initialize() {
-    System.out.println("FollowAprilTag_COMMAND Started");
+    //System.out.println("FollowAprilTag_COMMAND Started");
   }
 
   @Override
   public void execute() {
     LimelightTarget_Fiducial fiducial;
     SmartDashboard.putNumber("FollowAprilTag/TEST", 0);
+    SmartDashboard.putNumber("FollowAprilTag/Id", apriltagToFollow);
     try {
       fiducial = limelight.getTargetFiducialWithId(apriltagToFollow);
       Pose3d targetPoseRobotSpace = fiducial.getTargetPose_RobotSpace();
@@ -83,9 +84,11 @@ public class FollowAprilTagCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    System.out.println("FollowAprilTag_COMMAND isFinished!");
-    // return rotationalPidController.atSetpoint() && xPidController.atSetpoint()
-    return false;
+    boolean temp = rotationalPidController.atSetpoint() && xPidController.atSetpoint();
+    if ( temp ) {
+      System.out.println("AlignToApriltag_COMMAND IsFinished!");
+    }
+    return temp;
   }
 
   @Override
