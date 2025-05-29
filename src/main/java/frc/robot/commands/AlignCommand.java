@@ -100,7 +100,7 @@ public class AlignCommand extends Command {
       } else {
         /* if there is no apriltag in sight move the robot until one is found */
         // TO DO !!!!
-        m_drivetrain.setControl(alignRequest.withRotationalRate(0.1).withVelocityX(0.1));
+        m_drivetrain.setControl(alignRequest.withRotationalRate(-0.05).withVelocityX(0.2));
       }
     }
   }

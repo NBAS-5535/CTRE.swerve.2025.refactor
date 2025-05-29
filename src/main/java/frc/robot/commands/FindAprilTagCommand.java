@@ -64,6 +64,8 @@ public class FindAprilTagCommand extends Command {
         fiducial = m_limelight.getFiducialWithId(m_tagId);
       }
 
+      rotationalRate = rotationalPidController.calculate(2*fiducial.txnc, 0.0) * 0.75* 0.9;
+
       /* check if a valid target was found */
       if ( fiducial.ta > targetAreaTolerance ) { //&& rotationalPidController.atSetpoint()) {
         this.end(true);
@@ -72,6 +74,7 @@ public class FindAprilTagCommand extends Command {
       SmartDashboard.putNumber("FindAprilTag/txnc", fiducial.txnc);
       SmartDashboard.putNumber("FindAprilTag/distToRobot", fiducial.distToRobot);
       SmartDashboard.putNumber("FindAprilTag/area", fiducial.ta);
+      SmartDashboard.putNumber("FindAprilTag/rotationalPidController", rotationalRate);
       SmartDashboard.putNumber("FindAprilTag/TagID", m_tagId);
       /* uncomment for action */
       m_drivetrain.setControl(alignRequest.withRotationalRate(rotationalRate));
@@ -81,9 +84,13 @@ public class FindAprilTagCommand extends Command {
       if (rotationalRate != 0){
         /* uncomment for action */
         m_drivetrain.setControl(alignRequest.withRotationalRate(rotationalRate));
-        }
+      }  else {
+        /* if there is no apriltag in sight move the robot until one is found */
+        // TO DO !!!!
+        m_drivetrain.setControl(alignRequest.withRotationalRate(-0.05));
       }
     }
+  }
 
   @Override
   public boolean isFinished() {

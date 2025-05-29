@@ -346,7 +346,8 @@ public class RobotContainer {
             /* onTrue: robot moves until the alignment is completed
             *  whileTrue: must press the button until the alignment is completed
             */
-            joystick.x().onTrue(new AlignCommand(drivetrain, m_vision, aprilTagID));
+            //joystick.x().onTrue(new AlignCommand(drivetrain, m_vision, 5));
+            joystick.x().onTrue(new FindAprilTagCommand(drivetrain, m_vision, 5));
             /* simulate a sequence:
             * align with AprilTag
             */
@@ -364,12 +365,26 @@ public class RobotContainer {
                 //drivetrain.applyRequest(() -> brake),
                 drivetrain.sysIdDynamic(Direction.kForward).withTimeout(1.)//.until(() -> drivetrain.isDesiredPoseReached(1.))
             ));
+            
+            joystick.povUp().onTrue(new SequentialCommandGroup(
+                new InstantCommand(() -> drivetrain.setCurrentPose()),
+                new AlignCommand(drivetrain, m_vision, 1),
+                //drivetrain.applyRequest(() -> brake),
+                drivetrain.sysIdDynamic(Direction.kForward).until(() -> drivetrain.isDesiredPoseReached(1.))
+            ));
+
+            joystick.povDown().onTrue(new SequentialCommandGroup(
+                new InstantCommand(() -> drivetrain.setCurrentPose()),
+                new AlignCommand(drivetrain, m_vision, 5),
+                //drivetrain.applyRequest(() -> brake),
+                drivetrain.sysIdDynamic(Direction.kForward).until(() -> drivetrain.isDesiredPoseReached(2.))
+            ));
 
             /* available joystick slots for further testing
              * povUp()
              * povDown()
             */
-            /* get mindistance info */
+            /* get mindistance info 
             joystick.povUp().whileTrue(
                 new AlignToApriltagCommand(drivetrain, limelight, aprilTagID)
             );
@@ -377,6 +392,7 @@ public class RobotContainer {
             joystick.povDown().whileTrue(
                 new FollowAprilTagCommand(drivetrain, limelight, aprilTagID)
             );
+            */
 
         } // end visionTest
 
