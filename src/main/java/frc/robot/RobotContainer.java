@@ -349,7 +349,6 @@ public class RobotContainer {
             joystick.x().onTrue(new AlignCommand(drivetrain, m_vision, aprilTagID));
             /* simulate a sequence:
             * align with AprilTag
-            * Move forward by 2 meters
             */
             /* Testing Closest versus a specific AprilTag */
             boolean closestTag = true;

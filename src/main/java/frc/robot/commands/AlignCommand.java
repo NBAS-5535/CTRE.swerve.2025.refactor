@@ -79,10 +79,10 @@ public class AlignCommand extends Command {
       SmartDashboard.putNumber("AlignCommand/rotationalPidController", rotationalRate);
       SmartDashboard.putNumber("AlignCommand/xPidController", velocityX);
       SmartDashboard.putNumber("AlignCommand/TagID", m_tagId);
-      /* uncomment for action */
-      m_drivetrain.setControl(
-        // MAY WANNA VERIFY MOTION DIRECTIONS!!!!!!
-          alignRequest.withRotationalRate(rotationalRate).withVelocityX(velocityX));
+
+      /* move the robot to correct position */
+      m_drivetrain.setControl(alignRequest.withRotationalRate(rotationalRate).withVelocityX(velocityX));
+      // original code
           //alignRequest.withRotationalRate(-rotationalRate).withVelocityX(-velocityX));//.withVelocityY(velocityY));
       // drivetrain.applyRequest(() -> alignRequest.withRotationalRate(0.5 *
       // MaxAngularRate)
@@ -92,21 +92,23 @@ public class AlignCommand extends Command {
     } catch (VisionSubsystem.NoSuchTargetException nste) { 
       //System.out.println("No apriltag found");
       if ((rotationalRate != 0) && (velocityX != 0)){
-        /* uncomment for action */
-        m_drivetrain.setControl(
-          // MAY WANNA VERIFY MOTION DIRECTIONS!!!!!!
-          alignRequest.withRotationalRate(rotationalRate).withVelocityX(velocityX));
+        /* move the robot until apriltag is found??? */
+        m_drivetrain.setControl(alignRequest.withRotationalRate(rotationalRate).withVelocityX(velocityX));
         /* original statement
           alignRequest.withRotationalRate(-rotationalRate).withVelocityX(-velocityX));//.withVelocityY(velocityY));
         */
-        }
+      } else {
+        /* if there is no apriltag in sight move the robot until one is found */
+        // TO DO !!!!
+        m_drivetrain.setControl(alignRequest.withRotationalRate(0.1).withVelocityX(0.1));
       }
     }
+  }
 
   @Override
   public boolean isFinished() {
     boolean temp = rotationalPidController.atSetpoint() && xPidController.atSetpoint();
-    SmartDashboard.putBoolean("AlignFinished", temp);
+    SmartDashboard.putBoolean("AlignCommand/AlignFinished", temp);
     return temp;
   }
 

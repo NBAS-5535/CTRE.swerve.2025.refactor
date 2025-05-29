@@ -81,6 +81,7 @@ public class AlignToApriltagCommand extends Command {
       // }
 
       SmartDashboard.putNumber("AlignToApriltag/txnc", fiducial.tx_nocrosshair);
+      SmartDashboard.putNumber("AlignToApriltag/ta", fiducial.ta);
       SmartDashboard.putNumber("AlignToApriltag/distToRobot", distToRobot);
       SmartDashboard.putNumber("AlignToApriltag/rotationalPidController", rotationalRate);
       SmartDashboard.putNumber("AlignToApriltag/xPidController", velocityX);
