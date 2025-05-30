@@ -66,8 +66,8 @@ public class FindAprilTagCommand extends Command {
 
       rotationalRate = rotationalPidController.calculate(2*fiducial.txnc, 0.0) * 0.75* 0.9;
 
-      /* check if a valid target was found */
-      if ( fiducial.ta > targetAreaTolerance ) { //&& rotationalPidController.atSetpoint()) {
+      /* check if we are close enough to target to stop */
+      if (rotationalPidController.atSetpoint()) { //fiducial.ta > targetAreaTolerance
         this.end(true);
       }
 
@@ -87,14 +87,14 @@ public class FindAprilTagCommand extends Command {
       }  else {
         /* if there is no apriltag in sight move the robot until one is found */
         // TO DO !!!!
-        m_drivetrain.setControl(alignRequest.withRotationalRate(-0.05));
+        // m_drivetrain.setControl(alignRequest.withRotationalRate(-0.05));
       }
     }
   }
 
   @Override
   public boolean isFinished() {
-    boolean temp = fiducial.ta > targetAreaTolerance; //rotationalPidController.atSetpoint();
+    boolean temp = rotationalPidController.atSetpoint();
     SmartDashboard.putBoolean("FindAprilTag/FoundAprilTag", temp);
     return temp;
   }
