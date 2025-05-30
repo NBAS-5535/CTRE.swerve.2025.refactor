@@ -347,7 +347,7 @@ public class RobotContainer {
             *  whileTrue: must press the button until the alignment is completed
             */
             //joystick.x().onTrue(new AlignCommand(drivetrain, m_vision, 5));
-            joystick.x().onTrue(new FindAprilTagCommand(drivetrain, m_vision, 5));
+            joystick.x().onTrue(new FindAprilTagCommand(drivetrain, m_vision, aprilTagChooser.getSelected()));
             /* simulate a sequence:
             * align with AprilTag
             */

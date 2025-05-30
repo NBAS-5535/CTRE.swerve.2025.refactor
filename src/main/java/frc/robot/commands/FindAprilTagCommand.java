@@ -33,19 +33,24 @@ public class FindAprilTagCommand extends Command {
   private final VisionSubsystem m_limelight;
   private int m_tagId;
 
-  private static final PIDControllerConfigurable rotationalPidController = new PIDControllerConfigurable(0.05000, 0.000000, 0.001000, 0.01);
-    private static final SwerveRequest.RobotCentric alignRequest = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+  private static final PIDControllerConfigurable rotationalPidController = new PIDControllerConfigurable(0.05000, 0.000000, 0.001000, 0.1);
+  private static final PIDControllerConfigurable xPidController = new PIDControllerConfigurable(0.400000, 0.000000, 0.000600, 0.2);
+  private static final PIDControllerConfigurable yPidController = new PIDControllerConfigurable(0.3, 0, 0, 0.3);
+  
+  private static final SwerveRequest.RobotCentric alignRequest = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private static final SwerveRequest.Idle idleRequest = new SwerveRequest.Idle();
   private static final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   public double rotationalRate = 0.1;
-  private RawFiducial fiducial; 
+  public double velocityX = 0.1;
+  //private RawFiducial fiducial; 
   private double targetAreaTolerance = 0.5;
 
   public FindAprilTagCommand(CommandSwerveDrivetrain drivetrain, VisionSubsystem limelight, int tagId) {
     this.m_drivetrain = drivetrain;
     this.m_limelight = limelight;
     this.m_tagId = tagId;
-    addRequirements(m_limelight);
+    SmartDashboard.putNumber("FindAprilTag/TagToFind", m_tagId);
+    addRequirements(drivetrain, m_limelight);
   }
 
 
@@ -58,18 +63,16 @@ public class FindAprilTagCommand extends Command {
   public void execute() {
     
     try {
-      if (m_tagId == 0) {
-        fiducial = m_limelight.getClosestFiducial();
-      } else {
-        fiducial = m_limelight.getFiducialWithId(m_tagId);
-      }
+      RawFiducial fiducial = m_limelight.getFiducialWithId(m_tagId);
 
       rotationalRate = rotationalPidController.calculate(2*fiducial.txnc, 0.0) * 0.75* 0.9;
-
-      /* check if we are close enough to target to stop */
-      if (rotationalPidController.atSetpoint()) { //fiducial.ta > targetAreaTolerance
+      
+      final double velocityX = xPidController.calculate(fiducial.distToRobot, 0.1) * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.7;
+        
+      if (fiducial.ta > 0 ) { //} || (rotationalPidController.atSetpoint() && xPidController.atSetpoint())) {
+        System.out.println("Found Tag");
         this.end(true);
-      }
+        }
 
       SmartDashboard.putNumber("FindAprilTag/txnc", fiducial.txnc);
       SmartDashboard.putNumber("FindAprilTag/distToRobot", fiducial.distToRobot);
@@ -77,25 +80,24 @@ public class FindAprilTagCommand extends Command {
       SmartDashboard.putNumber("FindAprilTag/rotationalPidController", rotationalRate);
       SmartDashboard.putNumber("FindAprilTag/TagID", m_tagId);
       /* uncomment for action */
-      m_drivetrain.setControl(alignRequest.withRotationalRate(rotationalRate));
+      m_drivetrain.setControl(alignRequest.withRotationalRate(rotationalRate).withVelocityX(velocityX));
 
     } catch (VisionSubsystem.NoSuchTargetException nste) { 
-      System.out.println(getName() + " - No apriltag found");
-      if (rotationalRate != 0){
-        /* uncomment for action */
-        m_drivetrain.setControl(alignRequest.withRotationalRate(rotationalRate));
-      }  else {
-        /* if there is no apriltag in sight move the robot until one is found */
-        // TO DO !!!!
-        // m_drivetrain.setControl(alignRequest.withRotationalRate(-0.05));
+      //System.out.println(getName() + " - No apriltag found");
+      if ((rotationalRate != 0) && (velocityX != 0)){
+        /* move the robot until apriltag is found??? */
+        m_drivetrain.setControl(alignRequest.withRotationalRate(rotationalRate).withVelocityX(velocityX));
+        /* original statement
+          alignRequest.withRotationalRate(-rotationalRate).withVelocityX(-velocityX));//.withVelocityY(velocityY));
+        */
       }
     }
   }
 
   @Override
   public boolean isFinished() {
-    boolean temp = rotationalPidController.atSetpoint();
-    SmartDashboard.putBoolean("FindAprilTag/FoundAprilTag", temp);
+    boolean temp = rotationalPidController.atSetpoint() && xPidController.atSetpoint();
+    SmartDashboard.putBoolean("FindAprilTag/AlignFinished", temp);
     return temp;
   }
 
