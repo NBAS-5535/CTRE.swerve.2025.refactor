@@ -21,9 +21,9 @@ public class AlignToApriltagCommand extends Command {
   private final int aprilTagId;
 
   private static final PIDControllerConfigurable rotationalPidController = new PIDControllerConfigurable(
-      1.8, 0.05, 0, 0.4);
-  private static final PIDControllerConfigurable xPidController = new PIDControllerConfigurable(0.65, 0, 0, 0.06);
-  private static final PIDControllerConfigurable yPidController = new PIDControllerConfigurable(0.65, 0, 0, 0.06);
+      1.8, 0.05, 0, 0.1);
+  private static final PIDControllerConfigurable xPidController = new PIDControllerConfigurable(0.65, 0, 0, 0.2);
+  private static final PIDControllerConfigurable yPidController = new PIDControllerConfigurable(0.65, 0, 0, 0.2);
   private static final SwerveRequest.RobotCentric alignRequest = new SwerveRequest.RobotCentric()
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private static final SwerveRequest.Idle idleRequest = new SwerveRequest.Idle();
@@ -63,8 +63,8 @@ public class AlignToApriltagCommand extends Command {
       final double velocityX = xPidController.calculate(distToRobot, Inches.of(24).in(Meters)) * -1.0
           * DriveTrainConstants.MaxSpeed
           * 0.5;
-      final double velocityY = yPidController.calculate(sideError, 0) * 1.0 *
-      DriveTrainConstants.MaxSpeed * 0.5;
+      final double velocityY = yPidController.calculate(sideError, 0) * 1.0
+          * DriveTrainConstants.MaxSpeed * 0.5;
 
       if (!xPidController.atSetpoint() || !yPidController.atSetpoint()) {
         rotationalRate /= 5;
@@ -75,10 +75,9 @@ public class AlignToApriltagCommand extends Command {
       // }
       // double rotationalRate = 0;
 
-      // if (rotationalPidController.atSetpoint() && xPidController.atSetpoint() &&
-      // yPidController.atSetpoint()) {
-      // this.end(true);
-      // }
+      if (rotationalPidController.atSetpoint() && xPidController.atSetpoint() &&  yPidController.atSetpoint()) {
+        this.end(true);
+      }
 
       SmartDashboard.putNumber("AlignToApriltag/txnc", fiducial.tx_nocrosshair);
       SmartDashboard.putNumber("AlignToApriltag/ta", fiducial.ta);
@@ -88,7 +87,9 @@ public class AlignToApriltagCommand extends Command {
       drivetrain.setControl(
           alignRequest.withVelocityX(velocityX)
               .withVelocityY(velocityY));
+              
       drivetrain.setControl(alignRequest.withRotationalRate(rotationalRate));
+
     } catch (LimelightSubsystem.NoSuchTargetException nste) {
       SmartDashboard.putNumber("AlignToApriltag/TEST", -1);
       SmartDashboard.putNumber("AlignToApriltag/TagId", aprilTagId);

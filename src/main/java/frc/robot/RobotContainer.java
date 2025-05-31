@@ -111,7 +111,8 @@ public class RobotContainer {
     private SendableChooser<String> scenarioChooser;
 
     /* Limelight vision Apriltag chooser */
-    private SendableChooser<Integer> aprilTagChooser;
+    public SendableChooser<Integer> aprilTagChooser;
+    private int testAprilTagId;
 
     /* submenu */
     //private final SendableChooser<SendableChooser<String>> mainMenuChooser;
@@ -337,17 +338,14 @@ public class RobotContainer {
         /* Vision Subsystem */
         boolean visionTest = true;
         if (visionTest) {
-            /* pick an Apriltag ID from the menu */
-            //int aprilTagID = aprilTagChooser.getSelected();
-            int aprilTagID = 5;
-
             // get vision-based distance
             //joystick.x().onTrue(new InstantCommand(() -> m_vision.getDistanceToTarget()));
             /* onTrue: robot moves until the alignment is completed
             *  whileTrue: must press the button until the alignment is completed
             */
             //joystick.x().onTrue(new AlignCommand(drivetrain, m_vision, 5));
-            joystick.x().onTrue(new FindAprilTagCommand(drivetrain, m_vision, aprilTagChooser.getSelected()));
+            /* pick an Apriltag ID from the menu: check Robot.java for how to set (only in teleOpPeriodic mode) */
+            joystick.x().onTrue(new FindAprilTagCommand(drivetrain, m_vision, this.testAprilTagId));
             /* simulate a sequence:
             * align with AprilTag
             */
@@ -801,4 +799,8 @@ public class RobotContainer {
 
     }
 
+    // add a way to read a specific AprilTag
+    public void setAprilTagId(int id) {
+        this.testAprilTagId = id;
+    }
 }

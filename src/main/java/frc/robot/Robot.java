@@ -61,7 +61,10 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    // add a way to read a specific AprilTag
+    m_robotContainer.setAprilTagId(m_robotContainer.aprilTagChooser.getSelected());
+  }
 
   @Override
   public void teleopExit() {}
