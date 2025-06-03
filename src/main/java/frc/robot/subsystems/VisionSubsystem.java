@@ -11,12 +11,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.VisionConstants;
+
 import frc.robot.Vision.LimelightHelpers;
-import frc.robot.Vision.LimelightHelpers.*;
+import frc.robot.Vision.LimelightHelpers.RawFiducial;
+import frc.robot.Vision.LimelightHelpers.LimelightResults;
+import frc.robot.Vision.LimelightHelpers.LimelightTarget_Fiducial;
 
 public class VisionSubsystem extends SubsystemBase {
   private RawFiducial[] fiducials;
-  private double m_minDistance = 0.;
+  private LimelightResults limelightResults;
+  private final String limelightName = "";
+    private double m_minDistance = 0.;
 
   public VisionSubsystem() {
     config();
@@ -32,7 +37,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     // LimelightHelpers.setCropWindow("", -0.5, 0.5, -0.5, 0.5);
     LimelightHelpers.setCameraPose_RobotSpace(
-        "",
+      this.limelightName,
         0.38, //meters Meters.convertFrom(30. / 2., Inches), // forward location wrt robot center
         0.25, // assume perfect alignment with robor center
         0.26, //m Meters.convertFrom(VisionConstants.limelightLensHeightInches, Inches), // height of camera from the floor
@@ -64,6 +69,8 @@ public class VisionSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     fiducials = LimelightHelpers.getRawFiducials("");
+    this.limelightResults = LimelightHelpers.getLatestResults(this.limelightName);
+    SmartDashboard.putNumber("num" + this.limelightName, this.limelightResults.targets_Fiducials.length);
 
   }
 
@@ -115,6 +122,18 @@ public RawFiducial getFiducialWithId(int id, boolean verbose) {
   throw new NoSuchTargetException("Cannot find: " + id + ". IN view:: " + availableIds.toString());
   }
 
+  public LimelightTarget_Fiducial getTargetFiducialWithId(int id) {
+    for (LimelightTarget_Fiducial fiducial : limelightResults.targets_Fiducials) {
+      if (fiducial.fiducialID != (double) id) {
+        continue;
+      }
+
+      return fiducial;
+    }
+
+    throw new NoSuchTargetException("No target with ID " + id + " is in view!");
+  }
+  
   /* keep track of the minDistance found via linelight Apriltag search */
   public void setMinDistance(double distance) {
     m_minDistance = distance;

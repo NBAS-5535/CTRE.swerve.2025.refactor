@@ -53,8 +53,9 @@ public class AlignToApriltagCommand extends Command {
       Pose3d targetPoseInRobotSpace = fiducial.getTargetPose_CameraSpace();
       double distToRobot = targetPoseInRobotSpace.getZ();
       double sideError = targetPoseInRobotSpace.getX();
-      SmartDashboard.putNumber("AlignToApriltag/getRotation", targetPoseInRobotSpace.getRotation().getY());
-      SmartDashboard.putNumber("AlignToApriltag/TEST", distToRobot);
+      //SmartDashboard.putNumber("AlignToApriltag/getRotation", targetPoseInRobotSpace.getRotation().getY());
+      SmartDashboard.putNumber("AlignToApriltag/TEST", 1);
+      //SmartDashboard.putNumber("AlignToApriltag/distToRobot", distToRobot);
       double rotationalError = targetPoseInRobotSpace.getRotation().getY();
 
       double rotationalRate = rotationalPidController.calculate(rotationalError, 0)
@@ -76,6 +77,7 @@ public class AlignToApriltagCommand extends Command {
       // double rotationalRate = 0;
 
       if (rotationalPidController.atSetpoint() && xPidController.atSetpoint() &&  yPidController.atSetpoint()) {
+        System.out.println("AlignToApriltag_COMMAND - DONE");
         this.end(true);
       }
 
@@ -84,6 +86,8 @@ public class AlignToApriltagCommand extends Command {
       SmartDashboard.putNumber("AlignToApriltag/distToRobot", distToRobot);
       SmartDashboard.putNumber("AlignToApriltag/rotationalPidController", rotationalRate);
       SmartDashboard.putNumber("AlignToApriltag/xPidController", velocityX);
+      SmartDashboard.putNumber("AlignToApriltag/yPidController", velocityY);
+
       drivetrain.setControl(
           alignRequest.withVelocityX(velocityX)
               .withVelocityY(velocityY));
@@ -92,7 +96,7 @@ public class AlignToApriltagCommand extends Command {
 
     } catch (LimelightSubsystem.NoSuchTargetException nste) {
       SmartDashboard.putNumber("AlignToApriltag/TEST", -1);
-      SmartDashboard.putNumber("AlignToApriltag/TagId", aprilTagId);
+
       drivetrain.setControl(alignRequest.withRotationalRate(0.1));
     }
   }

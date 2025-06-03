@@ -13,7 +13,11 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.Vision.LimelightHelpers.RawFiducial;
+import frc.robot.Constants.DriveTrainConstants;
+import frc.robot.Vision.LimelightHelpers.LimelightTarget_Fiducial;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose3d;
+
 class PIDControllerConfigurable extends PIDController {
   public PIDControllerConfigurable(double kP, double kI, double kD) {
       super(kP, kI, kD);
@@ -54,13 +58,16 @@ public class AlignCommand extends Command {
   @Override
   public void execute() {
     
-    RawFiducial fiducial; 
+    RawFiducial fiducial;
+    LimelightTarget_Fiducial targetFiducial; 
 
     try {
       if (m_tagId == 0) {
         fiducial = m_limelight.getClosestFiducial();
+        targetFiducial = m_limelight.getTargetFiducialWithId(m_tagId);
       } else {
         fiducial = m_limelight.getFiducialWithId(m_tagId);
+        targetFiducial = m_limelight.getTargetFiducialWithId(m_tagId);
         //System.out.println("got it! " + String.valueOf(m_tagId));
       }
 
@@ -80,6 +87,7 @@ public class AlignCommand extends Command {
       SmartDashboard.putNumber("AlignCommand/xPidController", velocityX);
       SmartDashboard.putNumber("AlignCommand/TagID", m_tagId);
 
+
       /* move the robot to correct position */
       m_drivetrain.setControl(alignRequest.withRotationalRate(rotationalRate).withVelocityX(velocityX));
       // original code
@@ -89,6 +97,33 @@ public class AlignCommand extends Command {
       // .withVelocityX(xPidController.calculate(0.2 * MaxSpeed)));
       // drivetrain.setControl(brake);
       /**/
+      /* let's see how the other way works*/
+      Pose3d targetPoseInRobotSpace = targetFiducial.getTargetPose_CameraSpace();
+      double distToRobot = targetPoseInRobotSpace.getZ();
+      double sideError = targetPoseInRobotSpace.getX();
+      SmartDashboard.putNumber("AlignToApriltag/TEST", 1);
+      double rotationalError = targetPoseInRobotSpace.getRotation().getY();
+
+      double target_rotationalRate = rotationalPidController.calculate(rotationalError, 0)
+          * DriveTrainConstants.MaxAngularRate
+          * 0.5;
+      final double target_velocityX = xPidController.calculate(distToRobot, Inches.of(24).in(Meters)) * -1.0
+          * DriveTrainConstants.MaxSpeed
+          * 0.5;
+      final double target_velocityY = yPidController.calculate(sideError, 0) * 1.0
+          * DriveTrainConstants.MaxSpeed * 0.5;
+
+      if (!xPidController.atSetpoint() || !yPidController.atSetpoint()) {
+        target_rotationalRate /= 5;
+      }
+
+      SmartDashboard.putNumber("AlignToApriltag/txnc", targetFiducial.tx_nocrosshair);
+      SmartDashboard.putNumber("AlignToApriltag/ta", targetFiducial.ta);
+      SmartDashboard.putNumber("AlignToApriltag/distToRobot", distToRobot);
+      SmartDashboard.putNumber("AlignToApriltag/rotationalPidController", target_rotationalRate);
+      SmartDashboard.putNumber("AlignToApriltag/xPidController", target_velocityX);
+      SmartDashboard.putNumber("AlignToApriltag/yPidController", target_velocityY);
+
     } catch (VisionSubsystem.NoSuchTargetException nste) { 
       //System.out.println("No apriltag found");
       if ((rotationalRate != 0) && (velocityX != 0)){
