@@ -358,12 +358,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         double currentDistanceInX = Math.abs(currentPose.getX()) - Math.abs(m_initialPose.getX());
         double currentDistanceInY = Math.abs(currentPose.getY()) - Math.abs(m_initialPose.getY());
         double actualDistance = Math.sqrt(currentDistanceInX * currentDistanceInX + currentDistanceInY * currentDistanceInY);
+        SmartDashboard.putNumber("Pose/distance", actualDistance);
         // add a 1% error margin
         boolean condition = actualDistance >= 0.99 * distanceToGo ? true : false;
         if ( condition ) {
             this.stopAllMotors();
         }
-        SmartDashboard.putBoolean(getName(), condition);
+        SmartDashboard.putBoolean("Pose/Reached?", condition);
         return condition;
     }
 

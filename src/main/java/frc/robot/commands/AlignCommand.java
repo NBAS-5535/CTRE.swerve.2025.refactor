@@ -14,9 +14,10 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.Vision.LimelightHelpers.RawFiducial;
 import frc.robot.Constants.DriveTrainConstants;
-import frc.robot.Vision.LimelightHelpers.LimelightTarget_Fiducial;
+//import frc.robot.Vision.LimelightHelpers.LimelightTarget_Fiducial;
+//import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose3d;
+
 
 class PIDControllerConfigurable extends PIDController {
   public PIDControllerConfigurable(double kP, double kI, double kD) {
@@ -59,15 +60,15 @@ public class AlignCommand extends Command {
   public void execute() {
     
     RawFiducial fiducial;
-    LimelightTarget_Fiducial targetFiducial; 
+    //LimelightTarget_Fiducial targetFiducial; 
 
     try {
       if (m_tagId == 0) {
         fiducial = m_limelight.getClosestFiducial();
-        targetFiducial = m_limelight.getTargetFiducialWithId(m_tagId);
+        //targetFiducial = m_limelight.getTargetFiducialWithId(m_tagId);
       } else {
         fiducial = m_limelight.getFiducialWithId(m_tagId);
-        targetFiducial = m_limelight.getTargetFiducialWithId(m_tagId);
+        //targetFiducial = m_limelight.getTargetFiducialWithId(m_tagId);
         //System.out.println("got it! " + String.valueOf(m_tagId));
       }
 
@@ -98,6 +99,7 @@ public class AlignCommand extends Command {
       // drivetrain.setControl(brake);
       /**/
       /* let's see how the other way works*/
+      /* NEEDS ATTENTION!!!
       Pose3d targetPoseInRobotSpace = targetFiducial.getTargetPose_CameraSpace();
       double distToRobot = targetPoseInRobotSpace.getZ();
       double sideError = targetPoseInRobotSpace.getX();
@@ -123,7 +125,7 @@ public class AlignCommand extends Command {
       SmartDashboard.putNumber("AlignToApriltag/rotationalPidController", target_rotationalRate);
       SmartDashboard.putNumber("AlignToApriltag/xPidController", target_velocityX);
       SmartDashboard.putNumber("AlignToApriltag/yPidController", target_velocityY);
-
+    */
     } catch (VisionSubsystem.NoSuchTargetException nste) { 
       //System.out.println("No apriltag found");
       if ((rotationalRate != 0) && (velocityX != 0)){
