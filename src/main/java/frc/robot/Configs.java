@@ -10,6 +10,8 @@ import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import frc.robot.Constants.ActuatorSubsystemConstants;
 import frc.robot.Constants.LiftSubsystemConstants;
 
@@ -162,5 +164,15 @@ public class Configs {
 
       liftConfig.idleMode(IdleMode.kBrake);
     }
+  }
+  /* *****************
+   * VisionSubsystem 
+   */
+  public static final class VisionSubsystem {
+    /* the filed layout json is located at
+     * https://github.com/wpilibsuite/allwpilib/blob/main/apriltag/src/main/native/resources/edu/wpi/first/apriltag/
+     */
+    private final String jsonPath = "Vision/2025-reefscape-welded.json";
+    //public final AprilTagFieldLayout aprilTagFieldLayout = new AprilTagFieldLayout(AprilTagFields.k2025Reefscape.m_resourceFile);
   }
 }
