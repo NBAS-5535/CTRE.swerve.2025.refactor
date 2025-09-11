@@ -49,6 +49,7 @@ import frc.robot.subsystems.ActuatorSubsystem.ActuatorSetpoints;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.AlgaeSubsystem.Setpoint;
 import frc.robot.subsystems.Pigeon2GyroSubsystem;
+import frc.robot.subsystems.SimpleActuator;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.LiftSubsystem;
@@ -93,6 +94,7 @@ public class RobotContainer {
     /* actuator to move the levator to game start position */
     //public final boolean actuatorIsRev = false;
     public final ActuatorSubsystem m_actuator = new ActuatorSubsystem();
+    //public final SimpleActuator m_actuator = new SimpleActuator();
 
     /* elevator subsystem */
     //public final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
