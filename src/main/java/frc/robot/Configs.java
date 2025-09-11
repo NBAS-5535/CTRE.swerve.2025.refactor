@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.configs.CANrangeConfiguration;
+import com.ctre.phoenix6.configs.ProximityParamsConfigs;
+import com.ctre.phoenix6.hardware.CANrange;
+import com.ctre.phoenix6.signals.UpdateModeValue;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
@@ -165,6 +169,7 @@ public class Configs {
       liftConfig.idleMode(IdleMode.kBrake);
     }
   }
+
   /* *****************
    * VisionSubsystem 
    */
@@ -174,5 +179,24 @@ public class Configs {
      */
     private final String jsonPath = "Vision/2025-reefscape-welded.json";
     //public final AprilTagFieldLayout aprilTagFieldLayout = new AprilTagFieldLayout(AprilTagFields.k2025Reefscape.m_resourceFile);
+  }
+
+  /* *****************
+   * ProximitySensorSubsystem 
+   */
+  public static final class ProximitySensorSubsystem {
+    public static final CANrangeConfiguration proximitySensorConfig = new CANrangeConfiguration();
+
+    static {
+      // If CANrange has a signal strength of at least 2000, it is a valid measurement.
+      proximitySensorConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 2000; 
+      
+      // If CANrange detects an object within 0.1 meters, it will trigger the "isDetected" signal.
+      proximitySensorConfig.ProximityParams.ProximityThreshold = 0.1; 
+
+      // Make the CANrange update as fast as possible at 100 Hz. This requires short-range mode.
+      proximitySensorConfig.ToFParams.UpdateMode = UpdateModeValue.ShortRange100Hz; 
+
+    }
   }
 }
