@@ -347,7 +347,11 @@ public class RobotContainer {
             */
             //joystick.x().onTrue(new AlignCommand(drivetrain, m_vision, 5));
             /* pick an Apriltag ID from the menu: check Robot.java for how to set (only in teleOpPeriodic mode) */
-            joystick.x().onTrue(new FindAprilTagCommand(drivetrain, m_vision, this.testAprilTagId));
+            joystick.x().onTrue(new SequentialCommandGroup(
+                new InstantCommand(() -> setAprilTagId(aprilTagChooser.getSelected())),
+                new InstantCommand(() -> System.out.println("Search for TagID: " + String.valueOf(this.testAprilTagId))),
+                new FindAprilTagCommand(drivetrain, m_vision, this.testAprilTagId)
+            ));
             /* simulate a sequence:
             * align with AprilTag
             */

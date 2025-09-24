@@ -96,7 +96,10 @@ public class FindAprilTagCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    boolean temp = rotationalPidController.atSetpoint() && xPidController.atSetpoint();
+    boolean t1 = rotationalPidController.atSetpoint();
+    boolean t2 = xPidController.atSetpoint();
+    boolean temp = t1 && t2;
+    System.out.println("rotPID: " + String.valueOf(t1) + " - xPID: " + String.valueOf(t2));
     SmartDashboard.putBoolean("FindAprilTag/AlignFinished", temp);
     return temp;
   }
