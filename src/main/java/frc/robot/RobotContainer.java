@@ -89,6 +89,7 @@ public class RobotContainer {
     /* initial attempt */
     private final LimelightSubsystem limelight = new LimelightSubsystem();
     private final VisionSubsystem m_vision = new VisionSubsystem();
+    private FindAprilTagCommand findAprilTagCommand = new FindAprilTagCommand(drivetrain, m_vision, 0);
 
     /* 2025 game related subsystems */
     /* actuator to move the levator to game start position */
@@ -347,10 +348,13 @@ public class RobotContainer {
             */
             //joystick.x().onTrue(new AlignCommand(drivetrain, m_vision, 5));
             /* pick an Apriltag ID from the menu: check Robot.java for how to set (only in teleOpPeriodic mode) */
+            // create a reusable command
+
             joystick.x().onTrue(new SequentialCommandGroup(
                 new InstantCommand(() -> setAprilTagId(aprilTagChooser.getSelected())),
                 new InstantCommand(() -> System.out.println("Search for TagID: " + String.valueOf(this.testAprilTagId))),
-                new FindAprilTagCommand(drivetrain, m_vision, this.testAprilTagId)
+                new InstantCommand(() -> findAprilTagCommand.setAprilTagId(this.testAprilTagId))
+                //new FindAprilTagCommand(drivetrain, m_vision, this.testAprilTagId)
             ));
             /* simulate a sequence:
             * align with AprilTag
