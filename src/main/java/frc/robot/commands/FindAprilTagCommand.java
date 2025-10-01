@@ -49,7 +49,8 @@ public class FindAprilTagCommand extends Command {
     this.m_drivetrain = drivetrain;
     this.m_limelight = limelight;
     this.m_tagId = tagId;
-    SmartDashboard.putNumber("FindAprilTag/TagToFind", m_tagId);
+    SmartDashboard.putNumber("FindAprilTag/PassedTagToFind", tagId);
+    SmartDashboard.putNumber("FindAprilTag/TagToFind", this.m_tagId);
     addRequirements(drivetrain, m_limelight);
   }
 
@@ -69,7 +70,9 @@ public class FindAprilTagCommand extends Command {
       
       final double velocityX = xPidController.calculate(fiducial.distToRobot, 0.1) * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.7;
         
-      if (fiducial.ta > 0 ) { //} || (rotationalPidController.atSetpoint() && xPidController.atSetpoint())) {
+      if (fiducial.ta > 0 ) { //} || 
+      //if ((rotationalPidController.atSetpoint() && xPidController.atSetpoint())) {
+      //if (isFinished()) {
         System.out.println("Found Tag");
         this.end(true);
         }
@@ -99,7 +102,7 @@ public class FindAprilTagCommand extends Command {
     boolean t1 = rotationalPidController.atSetpoint();
     boolean t2 = xPidController.atSetpoint();
     boolean temp = t1 && t2;
-    System.out.println("rotPID: " + String.valueOf(t1) + " - xPID: " + String.valueOf(t2));
+    //System.out.println("rotPID: " + String.valueOf(t1) + " - xPID: " + String.valueOf(t2));
     SmartDashboard.putBoolean("FindAprilTag/AlignFinished", temp);
     return temp;
   }
