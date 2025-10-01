@@ -31,7 +31,7 @@ class PIDControllerConfigurable extends PIDController {
 public class FindAprilTagCommand extends Command {
   private final CommandSwerveDrivetrain m_drivetrain;
   private final VisionSubsystem m_limelight;
-  private int m_tagId;
+  private static int m_tagId;
 
   private static final PIDControllerConfigurable rotationalPidController = new PIDControllerConfigurable(0.05000, 0.000000, 0.001000, 0.1);
   private static final PIDControllerConfigurable xPidController = new PIDControllerConfigurable(0.400000, 0.000000, 0.000600, 0.2);
@@ -49,8 +49,8 @@ public class FindAprilTagCommand extends Command {
     this.m_drivetrain = drivetrain;
     this.m_limelight = limelight;
     this.m_tagId = tagId;
-    SmartDashboard.putNumber("FindAprilTag/PassedTagToFind", tagId);
-    SmartDashboard.putNumber("FindAprilTag/TagToFind", this.m_tagId);
+    SmartDashboard.putNumber("FindAprilTag/TagToFindIn", tagId);
+    SmartDashboard.putNumber("FindAprilTag/TagToFind", m_tagId);
     addRequirements(drivetrain, m_limelight);
   }
 
@@ -111,5 +111,9 @@ public class FindAprilTagCommand extends Command {
   public void end(boolean interrupted) {
     m_drivetrain.applyRequest(() -> idleRequest);
     
+  }
+
+  public void setAprilTagId(int tagId){
+    m_tagId = tagId;
   }
 }
