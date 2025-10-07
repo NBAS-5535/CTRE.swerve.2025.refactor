@@ -31,7 +31,7 @@ class PIDControllerConfigurable extends PIDController {
 public class FindAprilTagCommand extends Command {
   private final CommandSwerveDrivetrain m_drivetrain;
   private final VisionSubsystem m_limelight;
-  private static int m_tagId;
+  private int m_tagId;
 
   private static final PIDControllerConfigurable rotationalPidController = new PIDControllerConfigurable(0.05000, 0.000000, 0.001000, 0.1);
   private static final PIDControllerConfigurable xPidController = new PIDControllerConfigurable(0.400000, 0.000000, 0.000600, 0.2);
@@ -70,15 +70,19 @@ public class FindAprilTagCommand extends Command {
       
       final double velocityX = xPidController.calculate(fiducial.distToRobot, 0.1) * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.7;
         
-      if (fiducial.ta > 0 ) { //} || 
-      //if ((rotationalPidController.atSetpoint() && xPidController.atSetpoint())) {
+      //if (fiducial.ta > 0 ) { //} || 
+      // check if there is a valid target
+      //if ( m_limelight.getTV() ) {  
+      // check if there is a valid target AND the robot is near the Setpoints
+      if (m_limelight.getTV() && (rotationalPidController.atSetpoint() && xPidController.atSetpoint())) {
       //if (isFinished()) {
         System.out.println("Found Tag");
         this.end(true);
-        }
+      }
 
       SmartDashboard.putNumber("FindAprilTag/txnc", fiducial.txnc);
       SmartDashboard.putNumber("FindAprilTag/distToRobot", fiducial.distToRobot);
+      SmartDashboard.putNumber("FindAprilTag/distToCamera", fiducial.distToCamera);
       SmartDashboard.putNumber("FindAprilTag/area", fiducial.ta);
       SmartDashboard.putNumber("FindAprilTag/rotationalPidController", rotationalRate);
       SmartDashboard.putNumber("FindAprilTag/TagID", m_tagId);
@@ -102,6 +106,8 @@ public class FindAprilTagCommand extends Command {
     boolean t1 = rotationalPidController.atSetpoint();
     boolean t2 = xPidController.atSetpoint();
     boolean temp = t1 && t2;
+    // or need the following??
+    // boolean temp = m_limelight.getTV() && t1 && t2;
     //System.out.println("rotPID: " + String.valueOf(t1) + " - xPID: " + String.valueOf(t2));
     SmartDashboard.putBoolean("FindAprilTag/AlignFinished", temp);
     return temp;

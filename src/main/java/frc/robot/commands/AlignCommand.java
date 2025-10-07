@@ -84,6 +84,7 @@ public class AlignCommand extends Command {
       SmartDashboard.putNumber("AlignCommand/txnc", fiducial.txnc);
       SmartDashboard.putNumber("AlignCommand/ta", fiducial.ta);
       SmartDashboard.putNumber("AlignCommand/distToRobot", fiducial.distToRobot);
+      SmartDashboard.putNumber("AlignCommand/distToCamera", fiducial.distToCamera);
       SmartDashboard.putNumber("AlignCommand/rotationalPidController", rotationalRate);
       SmartDashboard.putNumber("AlignCommand/xPidController", velocityX);
       SmartDashboard.putNumber("AlignCommand/TagID", m_tagId);
@@ -138,6 +139,8 @@ public class AlignCommand extends Command {
         /* if there is no apriltag in sight move the robot until one is found */
         // TO DO !!!!
         // m_drivetrain.setControl(alignRequest.withRotationalRate(-0.05).withVelocityX(0.2));
+        // simply end the command to stop the robot
+        this.end(true);
       }
     }
   }

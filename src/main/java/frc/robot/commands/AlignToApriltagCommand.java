@@ -19,6 +19,7 @@ public class AlignToApriltagCommand extends Command {
   private final CommandSwerveDrivetrain drivetrain;
   private final LimelightSubsystem limelight;
   private final int aprilTagId;
+  private final double speedScale = 0.5;
 
   private static final PIDControllerConfigurable rotationalPidController = new PIDControllerConfigurable(
       1.8, 0.05, 0, 0.1);
@@ -60,12 +61,13 @@ public class AlignToApriltagCommand extends Command {
 
       double rotationalRate = rotationalPidController.calculate(rotationalError, 0)
           * DriveTrainConstants.MaxAngularRate
-          * 0.5;
+          * speedScale;
       final double velocityX = xPidController.calculate(distToRobot, Inches.of(24).in(Meters)) * -1.0
           * DriveTrainConstants.MaxSpeed
-          * 0.5;
+          * speedScale;
       final double velocityY = yPidController.calculate(sideError, 0) * 1.0
-          * DriveTrainConstants.MaxSpeed * 0.5;
+          * DriveTrainConstants.MaxSpeed 
+          * speedScale;
 
       if (!xPidController.atSetpoint() || !yPidController.atSetpoint()) {
         rotationalRate /= 5;
