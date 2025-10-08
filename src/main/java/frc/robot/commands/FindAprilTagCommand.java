@@ -74,18 +74,21 @@ public class FindAprilTagCommand extends Command {
       // check if there is a valid target
       //if ( m_limelight.getTV() ) {  
       // check if there is a valid target AND the robot is near the Setpoints
-      if (m_limelight.getTV() && (rotationalPidController.atSetpoint() && xPidController.atSetpoint())) {
+      if (fiducial.ta > 0 && (rotationalPidController.atSetpoint() && xPidController.atSetpoint())) {
       //if (isFinished()) {
         System.out.println("Found Tag");
         this.end(true);
       }
 
+      SmartDashboard.putNumber("FindAprilTag/TagID", m_tagId);
       SmartDashboard.putNumber("FindAprilTag/txnc", fiducial.txnc);
+      SmartDashboard.putBoolean("FindAprilTag/Found", m_limelight.getTV());
       SmartDashboard.putNumber("FindAprilTag/distToRobot", fiducial.distToRobot);
       SmartDashboard.putNumber("FindAprilTag/distToCamera", fiducial.distToCamera);
       SmartDashboard.putNumber("FindAprilTag/area", fiducial.ta);
       SmartDashboard.putNumber("FindAprilTag/rotationalPidController", rotationalRate);
-      SmartDashboard.putNumber("FindAprilTag/TagID", m_tagId);
+      SmartDashboard.putNumber("FindAprilTag/velocityX", velocityX);
+      
       /* uncomment for action */
       m_drivetrain.setControl(alignRequest.withRotationalRate(rotationalRate).withVelocityX(velocityX));
 
@@ -97,6 +100,8 @@ public class FindAprilTagCommand extends Command {
         /* original statement
           alignRequest.withRotationalRate(-rotationalRate).withVelocityX(-velocityX));//.withVelocityY(velocityY));
         */
+      } else {
+        m_drivetrain.setControl(alignRequest.withRotationalRate(0.3).withVelocityX(0.1));
       }
     }
   }
@@ -105,9 +110,9 @@ public class FindAprilTagCommand extends Command {
   public boolean isFinished() {
     boolean t1 = rotationalPidController.atSetpoint();
     boolean t2 = xPidController.atSetpoint();
-    boolean temp = t1 && t2;
+    //boolean temp = t1 && t2;
     // or need the following??
-    // boolean temp = m_limelight.getTV() && t1 && t2;
+    boolean temp = m_limelight.getTV() && t1 && t2;
     //System.out.println("rotPID: " + String.valueOf(t1) + " - xPID: " + String.valueOf(t2));
     SmartDashboard.putBoolean("FindAprilTag/AlignFinished", temp);
     return temp;
@@ -115,6 +120,7 @@ public class FindAprilTagCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
+    System.out.println("FindAprilTagCommand - Ended");
     m_drivetrain.applyRequest(() -> idleRequest);
     
   }

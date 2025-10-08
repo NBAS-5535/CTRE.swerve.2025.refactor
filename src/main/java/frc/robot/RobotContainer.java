@@ -89,7 +89,7 @@ public class RobotContainer {
     /* initial attempt */
     private final LimelightSubsystem limelight = new LimelightSubsystem();
     private final VisionSubsystem m_vision = new VisionSubsystem();
-    private FindAprilTagCommand findAprilTagCommand = new FindAprilTagCommand(drivetrain, m_vision, 0);
+    //private FindAprilTagCommand findAprilTagCommand = new FindAprilTagCommand(drivetrain, m_vision, 0);
 
     /* 2025 game related subsystems */
     /* actuator to move the levator to game start position */
@@ -351,15 +351,17 @@ public class RobotContainer {
             // create a reusable command
             boolean readChooser = false;
             if ( readChooser ) {
+                /*
                 joystick.x().onTrue(new SequentialCommandGroup(
                     new InstantCommand(() -> setAprilTagId(aprilTagChooser.getSelected())),
                     new InstantCommand(() -> System.out.println("Search for TagID: " + String.valueOf(this.testAprilTagId))),
-                    new InstantCommand(() -> findAprilTagCommand.setAprilTagId(this.testAprilTagId))
-                ));
-            } else {
-                joystick.x().onTrue(new SequentialCommandGroup(
                     new FindAprilTagCommand(drivetrain, m_vision, this.testAprilTagId)
                 ));
+                */
+            } else {
+                joystick.x().onTrue(
+                    new FindAprilTagCommand(drivetrain, m_vision, 12)
+                );
             }
             /* simulate a sequence:
             * align with AprilTag
@@ -379,13 +381,9 @@ public class RobotContainer {
                 drivetrain.sysIdDynamic(Direction.kForward).withTimeout(1.)//.until(() -> drivetrain.isDesiredPoseReached(1.))
             ));
             
-            joystick.povUp().onTrue(new SequentialCommandGroup(
-                new InstantCommand(() -> drivetrain.setCurrentPose()),
-                new AlignCommand(drivetrain, m_vision, 12),
-                //drivetrain.applyRequest(() -> brake),
-                drivetrain.sysIdDynamic(Direction.kForward).until(() -> drivetrain.isDesiredPoseReached(1.))
-                //new InstantCommand(() -> drivetrain.setControl(drivetrain.robotCentricMove.withVelocityX(0.1))).until(() -> drivetrain.isDesiredPoseReached(1.))
-            ));
+            joystick.povUp().onTrue(
+                new AlignCommand(drivetrain, m_vision, 12)
+            );
 
             /* 
             joystick.povDown().onTrue(new SequentialCommandGroup(
