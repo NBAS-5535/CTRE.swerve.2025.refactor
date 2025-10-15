@@ -351,18 +351,18 @@ public class RobotContainer {
             // create a reusable command
             boolean readChooser = false;
             if ( readChooser ) {
-                /*
-                joystick.x().onTrue(new SequentialCommandGroup(
+                
+                joystick.povDown().onTrue(new SequentialCommandGroup(
                     new InstantCommand(() -> setAprilTagId(aprilTagChooser.getSelected())),
                     new InstantCommand(() -> System.out.println("Search for TagID: " + String.valueOf(this.testAprilTagId))),
                     new FindAprilTagCommand(drivetrain, m_vision, this.testAprilTagId)
                 ));
-                */
-            } else {
-                joystick.x().onTrue(
-                    new FindAprilTagCommand(drivetrain, m_vision, 12)
-                );
+                
             }
+            joystick.x().onTrue(
+                new FindAprilTagCommand(drivetrain, m_vision, 12)
+            );
+            
             /* simulate a sequence:
             * align with AprilTag
             */
@@ -393,7 +393,7 @@ public class RobotContainer {
             ));
             */
             /* try the AlignToAprilTagCommand */
-            joystick.povDown().onTrue(new AlignToApriltagCommand(drivetrain, limelight, 8));
+            joystick.povDown().onTrue(new FindAprilTagCommand(drivetrain, m_vision, 1));
 
         } // end visionTest
 
