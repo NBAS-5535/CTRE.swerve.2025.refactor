@@ -40,8 +40,12 @@ public class FindAprilTagCommand extends Command {
   private static final SwerveRequest.RobotCentric alignRequest = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private static final SwerveRequest.Idle idleRequest = new SwerveRequest.Idle();
   private static final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  public double rotationalRate = 0.1;
-  public double velocityX = 0.1;
+  public double baseRotationalRate = 0.1;
+  public double baseVelocityX = 0.1;
+
+  public double rotationalRate = 0.0;
+  public double velocityX = 0.0;
+
   //private RawFiducial fiducial; 
   private double targetAreaTolerance = 0.5;
 
@@ -68,15 +72,15 @@ public class FindAprilTagCommand extends Command {
 
       rotationalRate = rotationalPidController.calculate(2*fiducial.txnc, 0.0) * 0.75* 0.9;
       
-      final double velocityX = xPidController.calculate(fiducial.distToRobot, 0.1) * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.7;
+      velocityX = xPidController.calculate(fiducial.distToRobot, 0.1) * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.7;
         
       //if (fiducial.ta > 0 ) { //} || 
       // check if there is a valid target
       //if ( m_limelight.getTV() ) {  
       // check if there is a valid target AND the robot is near the Setpoints
-      if (fiducial.ta > 0 && (rotationalPidController.atSetpoint() && xPidController.atSetpoint())) {
-      //if (isFinished()) {
-        System.out.println("Found Tag");
+      //if (fiducial.ta > 0 && (rotationalPidController.atSetpoint() && xPidController.atSetpoint())) {
+      if (rotationalPidController.atSetpoint() && xPidController.atSetpoint()) {
+        System.out.println("Aligned with Tag:" + Integer.toString(m_tagId));
         this.end(true);
       }
 
@@ -101,7 +105,9 @@ public class FindAprilTagCommand extends Command {
           alignRequest.withRotationalRate(-rotationalRate).withVelocityX(-velocityX));//.withVelocityY(velocityY));
         */
       } else {
-        m_drivetrain.setControl(alignRequest.withRotationalRate(0.3).withVelocityX(0.1));
+        // use predefined rates - just rotate
+        m_drivetrain.setControl(alignRequest.withRotationalRate(this.baseRotationalRate));//.withVelocityX(this.baseVelocityX));
+        System.out.println("FindAprilTag: Rotating at base speed");
       }
     }
   }
