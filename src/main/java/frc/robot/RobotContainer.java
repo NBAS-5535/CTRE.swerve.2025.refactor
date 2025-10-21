@@ -236,7 +236,7 @@ public class RobotContainer {
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        boolean pidTest = true;
+        boolean pidTest = false;
         if (pidTest) {
             double timeOut = 1.;
             joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));//.withTimeout(timeOut));
@@ -392,8 +392,11 @@ public class RobotContainer {
                 drivetrain.sysIdDynamic(Direction.kForward).until(() -> drivetrain.isDesiredPoseReached(1.))
             ));
             */
-            /* try the AlignToAprilTagCommand */
+            
             joystick.povDown().onTrue(new FindAprilTagCommand(drivetrain, m_vision, 1));
+            /* try the AlignToAprilTagCommand */
+            joystick.back().onTrue(new AlignToApriltagCommand(drivetrain, limelight, 12));
+            joystick.start().onTrue(new AlignToApriltagCommand(drivetrain, limelight, 9));
 
         } // end visionTest
 

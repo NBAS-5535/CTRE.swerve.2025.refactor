@@ -13,7 +13,9 @@ import frc.robot.commands.PIDControllerConfigurable;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.Constants.DriveTrainConstants;
+import frc.robot.Vision.LimelightHelpers;
 import frc.robot.Vision.LimelightHelpers.LimelightTarget_Fiducial;
+import frc.robot.Vision.LimelightHelpers.RawFiducial;
 
 public class AlignToApriltagCommand extends Command {
   private final CommandSwerveDrivetrain drivetrain;
@@ -46,12 +48,14 @@ public class AlignToApriltagCommand extends Command {
 
   @Override
   public void execute() {
-    LimelightTarget_Fiducial fiducial;
+    //LimelightTarget_Fiducial fiducial;
+    RawFiducial fiducial;
     SmartDashboard.putNumber("AlignToApriltag/TEST", 0);
     SmartDashboard.putNumber("AlignToApriltag/Id", aprilTagId);
     try {
-      fiducial = limelight.getTargetFiducialWithId(aprilTagId); // was set to 21
-      Pose3d targetPoseInRobotSpace = fiducial.getTargetPose_CameraSpace();
+      //fiducial = limelight.getTargetFiducialWithId(aprilTagId); // was set to 21
+      fiducial = limelight.getRawFiducialWithId(aprilTagId); // was set to 21
+      Pose3d targetPoseInRobotSpace = LimelightHelpers.getCameraPose3d_RobotSpace("");
       double distToRobot = targetPoseInRobotSpace.getZ();
       double sideError = targetPoseInRobotSpace.getX();
       //SmartDashboard.putNumber("AlignToApriltag/getRotation", targetPoseInRobotSpace.getRotation().getY());
@@ -69,6 +73,9 @@ public class AlignToApriltagCommand extends Command {
           * DriveTrainConstants.MaxSpeed 
           * speedScale;
 
+      SmartDashboard.putNumber("AlignToApriltag/sideError", sideError);
+      SmartDashboard.putNumber("AlignToApriltag/rotationalError", rotationalError);
+
       if (!xPidController.atSetpoint() || !yPidController.atSetpoint()) {
         rotationalRate /= 5;
       }
@@ -83,7 +90,7 @@ public class AlignToApriltagCommand extends Command {
         this.end(true);
       }
 
-      SmartDashboard.putNumber("AlignToApriltag/txnc", fiducial.tx_nocrosshair);
+      SmartDashboard.putNumber("AlignToApriltag/txnc", fiducial.txnc);
       SmartDashboard.putNumber("AlignToApriltag/ta", fiducial.ta);
       SmartDashboard.putNumber("AlignToApriltag/distToRobot", distToRobot);
       SmartDashboard.putNumber("AlignToApriltag/rotationalPidController", rotationalRate);
