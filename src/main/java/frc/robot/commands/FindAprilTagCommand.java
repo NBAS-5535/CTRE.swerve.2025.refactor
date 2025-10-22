@@ -33,15 +33,17 @@ public class FindAprilTagCommand extends Command {
   private final VisionSubsystem m_limelight;
   private final int m_tagId;
 
-  private static final PIDControllerConfigurable rotationalPidController = new PIDControllerConfigurable(0.05000, 0.000000, 0.001000, 0.1);
-  private static final PIDControllerConfigurable xPidController = new PIDControllerConfigurable(0.400000, 0.000000, 0.000600, 0.2);
-  private static final PIDControllerConfigurable yPidController = new PIDControllerConfigurable(0.3, 0, 0, 0.3);
+  private  final PIDControllerConfigurable rotationalPidController = new PIDControllerConfigurable(0.05000, 0.000000, 0.001000, 0.1);
+  private  final PIDControllerConfigurable xPidController = new PIDControllerConfigurable(0.400000, 0.000000, 0.000600, 0.2);
+  private  final PIDControllerConfigurable yPidController = new PIDControllerConfigurable(0.3, 0, 0, 0.3);
   
   private static final SwerveRequest.RobotCentric alignRequest = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private static final SwerveRequest.Idle idleRequest = new SwerveRequest.Idle();
   private static final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   public double baseRotationalRate = 0.5;
   public double baseVelocityX = 0.1;
+
+  private int printCount = 0;
 
   //public double rotationalRate = 0.0;
   //public double velocityX = 0.0;
@@ -68,8 +70,10 @@ public class FindAprilTagCommand extends Command {
   public void execute() {
     final RawFiducial fiducial;
     try {
-      System.out.println("try " + Integer.toString(this.m_tagId));
-      fiducial = m_limelight.getFiducialWithId(this.m_tagId);
+      printCount++;
+      if ( printCount % 1 == 0) System.out.println("try " + Integer.toString(this.m_tagId));
+      fiducial = m_limelight.getFiducialWithId(this.m_tagId, true);
+      if ( printCount % 1 == 0) System.out.println("fiducial found " + Integer.toString(this.m_tagId));
 
       final double rotationalRate = rotationalPidController.calculate(2*fiducial.txnc, 0.0) * 0.75* 0.9;
       
@@ -96,8 +100,13 @@ public class FindAprilTagCommand extends Command {
     } catch (VisionSubsystem.NoSuchTargetException nste) { 
         // use predefined rates - just rotate
         m_drivetrain.setControl(alignRequest.withRotationalRate(this.baseRotationalRate));//.withVelocityX(this.baseVelocityX));
-        System.out.println("FindAprilTag: Searching for tag " + Integer.toString(m_tagId) + " at " + 
+        if ( printCount % 10 == 0) {
+          System.out.println("FindAprilTag: Searching for tag " + Integer.toString(m_tagId) + " at " + 
           Double.toString(baseRotationalRate) + " " + Double.toString(baseVelocityX));
+        }
+        {
+          System.out.println(nste.getMessage());
+        }
     }
   }
 
@@ -105,10 +114,10 @@ public class FindAprilTagCommand extends Command {
   public boolean isFinished() {
     boolean t1 = rotationalPidController.atSetpoint();
     boolean t2 = xPidController.atSetpoint();
-    boolean temp = t1 && t2;
+    //boolean temp = t1 && t2;
     // or need the following??
-    //boolean temp = m_limelight.getTV() && t1 && t2;
-    //System.out.println("rotPID: " + String.valueOf(t1) + " - xPID: " + String.valueOf(t2));
+    boolean temp = m_limelight.getTV() && t1 && t2;
+    System.out.println("rotPID: " + String.valueOf(t1) + " - xPID: " + String.valueOf(t2));
     SmartDashboard.putBoolean("FindAprilTag/AlignFinished", temp);
     return temp;
   }

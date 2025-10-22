@@ -396,7 +396,7 @@ public class RobotContainer {
             joystick.povDown().onTrue(new FindAprilTagCommand(drivetrain, m_vision, 1));
             /* try the AlignToAprilTagCommand */
             joystick.back().onTrue(new AlignToApriltagCommand(drivetrain, limelight, 12));
-            joystick.start().onTrue(new AlignToApriltagCommand(drivetrain, limelight, 9));
+            joystick.start().onTrue(new AlignToApriltagCommand(drivetrain, limelight, 8));
 
         } // end visionTest
 

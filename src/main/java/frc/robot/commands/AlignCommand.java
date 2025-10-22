@@ -34,9 +34,9 @@ public class AlignCommand extends Command {
   private final VisionSubsystem m_limelight;
   private int m_tagId;
 
-  private static final PIDControllerConfigurable rotationalPidController = new PIDControllerConfigurable(0.05000, 0.000000, 0.001000, 0.1);
-  private static final PIDControllerConfigurable xPidController = new PIDControllerConfigurable(0.400000, 0.000000, 0.000600, 0.2);
-  private static final PIDControllerConfigurable yPidController = new PIDControllerConfigurable(0.3, 0, 0, 0.3);
+  private  final PIDControllerConfigurable rotationalPidController = new PIDControllerConfigurable(0.05000, 0.000000, 0.001000, 0.1);
+  private  final PIDControllerConfigurable xPidController = new PIDControllerConfigurable(0.400000, 0.000000, 0.000600, 0.2);
+  private  final PIDControllerConfigurable yPidController = new PIDControllerConfigurable(0.3, 0, 0, 0.3);
   private static final SwerveRequest.RobotCentric alignRequest = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private static final SwerveRequest.Idle idleRequest = new SwerveRequest.Idle();
   private static final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -105,9 +105,9 @@ public class AlignCommand extends Command {
       } else {
         /* if there is no apriltag in sight move the robot until one is found */
         // TO DO !!!!
-        // m_drivetrain.setControl(alignRequest.withRotationalRate(-0.05).withVelocityX(0.2));
+        m_drivetrain.setControl(alignRequest.withRotationalRate(-0.05));//.withVelocityX(0.2));
         // simply end the command to stop the robot
-        this.end(true);
+        //this.end(true);
       }
     }
   }

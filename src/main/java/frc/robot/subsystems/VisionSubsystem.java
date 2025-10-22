@@ -103,13 +103,14 @@ public class VisionSubsystem extends SubsystemBase {
   public RawFiducial getFiducialWithId(int id) {
   
     for (RawFiducial fiducial : fiducials) {
-        System.out.println("Look up " + Integer.toString(fiducial.id));
+        //System.out.println("Look up " + Integer.toString(fiducial.id));
         if (fiducial.id == id) {
-          System.out.println("Found " + Integer.toString(fiducial.id));
+          //System.out.println("Found " + Integer.toString(fiducial.id));
             return fiducial;
-        } else {
-          throw new NoSuchTargetException("Can't find ID: " + id);
-        }
+        } //else {
+          //System.out.println("Nothing yet " + Integer.toString(fiducial.id));
+          //throw new NoSuchTargetException("Can't find ID: " + id);
+        //}
     }
     throw new NoSuchTargetException("Can't find ID: " + id);
   }
