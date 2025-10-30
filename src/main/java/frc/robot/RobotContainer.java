@@ -34,7 +34,7 @@ import frc.robot.Constants.AutonomousMenuConstants;
 import frc.robot.Constants.AutonomousModeOptions;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AlignCommand;
-import frc.robot.commands.AlignToApriltagCommand;
+import frc.robot.commands.AlignToAprilTagCommand;
 import frc.robot.commands.Autos;
 import frc.robot.commands.FindAprilTagCommand;
 import frc.robot.commands.FollowAprilTagCommand;
@@ -393,10 +393,19 @@ public class RobotContainer {
             ));
             */
             
-            joystick.povDown().onTrue(new FindAprilTagCommand(drivetrain, m_vision, 1));
-            /* try the AlignToAprilTagCommand */
-            joystick.back().onTrue(new AlignToApriltagCommand(drivetrain, limelight, 12));
-            joystick.start().onTrue(new AlignToApriltagCommand(drivetrain, limelight, 8));
+            boolean testCase = false;
+            if ( testCase ){
+                /* try the FindAprilTagCommand */
+                joystick.povDown().onTrue(new FindAprilTagCommand(drivetrain, m_vision, 1));         
+                joystick.back().onTrue(new FindAprilTagCommand(drivetrain, m_vision, 12));
+                joystick.start().onTrue(new FindAprilTagCommand(drivetrain, m_vision, 8));
+            } else {
+                /* try the AlignToAprilTagCommand */
+                joystick.povDown().onTrue(new AlignToAprilTagCommand(drivetrain, m_vision, 1));         
+                joystick.back().onTrue(new AlignToAprilTagCommand(drivetrain, m_vision, 12));
+                joystick.start().onTrue(new AlignToAprilTagCommand(drivetrain, m_vision, 8));
+            }
+            
 
         } // end visionTest
 
